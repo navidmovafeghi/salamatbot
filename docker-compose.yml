@@ -1,0 +1,22 @@
+# salamatbot/docker-compose.yml
+
+version: '3.8' # Specifies the Docker Compose version
+
+services:
+  # This defines our PostgreSQL database service
+  postgres_db:
+    image: postgres:15-alpine # Use the official PostgreSQL 15 image
+    container_name: salamatbot_db # A friendly name for the container
+    ports:
+      - "5432:5432" # Map port 5432 on your machine to port 5432 in the container
+    volumes:
+      - salamatbot_data:/var/lib/postgresql/data # Persist database data on your machine
+    environment:
+      # These credentials MUST match what you put in your backend's .env file
+      POSTGRES_USER: your_db_user
+      POSTGRES_PASSWORD: your_db_password
+      POSTGRES_DB: salamatbot_dev
+
+volumes:
+  # This defines the named volume for data persistence
+  salamatbot_data:
