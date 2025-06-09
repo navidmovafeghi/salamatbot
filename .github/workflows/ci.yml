@@ -42,6 +42,10 @@ jobs:
       - name: Run linter
         run: npm run lint
 
+      # 4.5. Create .env file for tests
+      - name: Create .env file
+        run: echo "JWT_SECRET=test_secret_for_ci" > .env
+
       # 5. Runs the tests (currently just a placeholder)
       - name: Run tests
         run: npm run test
