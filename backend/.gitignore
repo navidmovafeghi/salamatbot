@@ -1,2 +1,14 @@
-# Ignore environment variables file
-.env 
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# Environment variables
+.env
+
+# Log files
+*.log
+
+# Docker
+.docker/
