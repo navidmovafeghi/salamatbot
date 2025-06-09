@@ -16,7 +16,20 @@ jobs:
   backend-ci:
     name: Backend CI
     runs-on: ubuntu-latest # Run on a standard Linux virtual machine
-    
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: testdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     defaults:
       run:
         working-directory: ./backend # Set the default directory for all commands
@@ -45,6 +58,12 @@ jobs:
       # 4.5. Create .env file for tests
       - name: Create .env file
         run: echo "JWT_SECRET=test_secret_for_ci" > .env
+
+      - name: Set DATABASE_URL in .env
+        run: echo "DATABASE_URL=postgresql://test:test@localhost:5432/testdb" >> .env
+
+      - name: Run Prisma migrations
+        run: npx prisma migrate deploy
 
       # 5. Runs the tests (currently just a placeholder)
       - name: Run tests
