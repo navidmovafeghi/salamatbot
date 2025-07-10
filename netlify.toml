@@ -1,0 +1,18 @@
+# This file MUST be at the root of your project
+
+[build]
+  # Tell Netlify to go into the "frontend" folder
+  base    = "frontend"
+  # The command to run
+  command = "npm run build"
+  # The folder containing the build output
+  publish = ".next"
+
+[build.environment]
+  # Setting the Node.js version is good practice
+  NODE_VERSION = "18"
+
+# THIS IS THE CRUCIAL PART YOU NEED TO ADD
+# It tells Netlify to use the special engine for Next.js sites.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
