@@ -28,8 +28,9 @@
 
 @font-face {
     font-family: 'Kalameh';
-    src: url('/fonts/Kalameh-Black.ttf') format('truetype');
-    font-weight: 900;
+    src: url('/fonts/KalamehWeb-Regular.woff2') format('woff2'),
+         url('/fonts/Kalameh-Regular.ttf') format('truetype');
+    font-weight: 400;
     font-style: normal;
 }
 
