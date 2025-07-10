@@ -663,27 +663,43 @@ body.chat-mode {
         margin-left: 0.75rem;
     }
 
-    .chat-input-area {
-        padding: 0.875rem;
-        border-radius: 12px;
+    /* Mobile Chat Form Enhancements */
+    .chat-form {
+        display: flex;
+        flex-direction: column;
+        min-height: 40vh; /* Take up more vertical space */
     }
 
-    #chat-input {
-        font-size: 0.9rem;
-        min-height: 50px;
+    .chat-input-area {
+        padding: 1rem;
+        border-radius: 16px;
+        min-height: 180px; /* Increased height for mobile */
+        flex: 1; /* Allow it to grow */
+    }
+
+    .chat-input-area textarea {
+        font-size: 0.95rem;
+        min-height: 120px; /* Taller textarea */
+        padding-top: 0.75rem;
     }
 
     .submit-button {
-        width: 42px;
-        height: 42px;
+        width: 44px;
+        height: 44px;
     }
 
     .submit-button i {
-        font-size: 1rem;
+        font-size: 1.1rem;
     }
 
-    .disclaimer p {
-        font-size: 0.8rem;
+    /* Push disclaimer to bottom */
+    .disclaimer {
+        margin-top: auto; /* Push to bottom */
+        margin-bottom: 0;
+        padding: 1rem 0.5rem;
+        font-size: 0.75rem;
+        line-height: 1.3;
+        background: transparent; /* Remove white background */
     }
 
     #chat-history {
@@ -694,6 +710,28 @@ body.chat-mode {
         padding: 0.875rem;
         font-size: 0.9rem;
         max-width: 90%;
+    }
+
+    /* Ensure proper spacing in chat mode */
+    body.chat-mode {
+        padding: 1rem;
+    }
+
+    .container.chat-active {
+        height: 100vh;
+        padding: 0;
+    }
+
+    .container.chat-active .chat-form {
+        min-height: 35vh; /* Ensure minimum height in chat mode */
+        margin-top: auto;
+        padding: 1rem;
+    }
+
+    .container.chat-active .disclaimer {
+        margin-top: 0.5rem;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.7rem;
     }
 }
 
@@ -719,21 +757,33 @@ body.chat-mode {
         font-size: 1.5rem;
     }
 
-    .chat-input-area {
-        padding: 0.75rem;
+    /* Enhanced small mobile chat form */
+    .chat-form {
+        min-height: 45vh; /* Even more space on small screens */
     }
 
-    #chat-input {
-        min-height: 45px;
+    .chat-input-area {
+        padding: 0.875rem;
+        min-height: 200px; /* Taller on small screens */
+    }
+
+    .chat-input-area textarea {
+        min-height: 140px; /* Even taller textarea */
+        font-size: 0.9rem;
     }
 
     .submit-button {
-        width: 38px;
-        height: 38px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .disclaimer {
+        padding: 0.875rem 0.5rem;
+        font-size: 0.7rem;
     }
 
     #chat-history {
-        max-height: 300px;
+        max-height: 280px;
         padding: 0.75rem;
     }
 
@@ -741,5 +791,16 @@ body.chat-mode {
         padding: 0.75rem;
         font-size: 0.85rem;
         max-width: 95%;
+    }
+
+    /* Small mobile chat mode adjustments */
+    .container.chat-active .chat-form {
+        min-height: 40vh;
+        padding: 0.75rem;
+    }
+
+    .container.chat-active .disclaimer {
+        padding: 0.625rem 0.5rem;
+        font-size: 0.65rem;
     }
 }
