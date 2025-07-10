@@ -166,6 +166,7 @@
   },
   "active": "e1861ad6ab5e1cf5",
   "lastOpenFiles": [
+    "frontend/app/components/SplashScreen.tsx",
     "tmp_rovodev_test_mobile.html",
     "tmp_code_6ee7765262360350314397d180bcf0acc06284da0dbd8c4a82c8cea6e72942d6.ps1",
     "tmp_code_74cb8b0a9fd46f5377a1ae833eaa39623e22d333e15b485bf5358434bfd2fc6e.ps1",
@@ -178,7 +179,6 @@
     "tmp_code_b2eda77a4b4d5a2fd36fd9147da5991d64e8cb04afb766138df7a69a52bcb7c6.ps1",
     "Layer 0 copy.png",
     "frontend/Kalameh/03- Non English/WebFonts/fonts/woff2/KalamehWebNoEn-Thin.woff2",
-    "frontend/Kalameh/03- Non English/WebFonts/fonts/woff2/KalamehWebNoEn-SemiBold.woff2",
     "frontend/Kalameh/old version/old kalameh-01.png",
     "frontend/Kalameh/Kalameh.png",
     "frontend/node_modules/next/dist/compiled/@babel/runtime/README.md",

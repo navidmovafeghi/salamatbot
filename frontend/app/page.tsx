@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import InitialScreen from './components/InitialScreen'
 import ChatScreen from './components/ChatScreen'
 import ChatForm from './components/ChatForm'
+import SplashScreen from './components/SplashScreen'
 
 export interface Message {
   id: string
@@ -13,6 +14,7 @@ export interface Message {
 }
 
 export default function Home() {
+  const [showSplash, setShowSplash] = useState(true)
   const [isChatMode, setIsChatMode] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
 
@@ -56,6 +58,15 @@ export default function Home() {
       }
       setMessages(prev => [...prev, botMessage])
     }, 1000)
+  }
+
+  const handleSplashComplete = () => {
+    setShowSplash(false)
+  }
+
+  // Show splash screen first
+  if (showSplash) {
+    return <SplashScreen onComplete={handleSplashComplete} />
   }
 
   return (
