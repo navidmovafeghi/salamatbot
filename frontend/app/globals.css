@@ -460,6 +460,165 @@ body.chat-mode {
 }
 
 
+/* --- Mobile Suggestions Modal/Drawer --- */
+.mobile-suggestions-trigger {
+    display: none;
+}
+
+.quick-questions-btn {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+    text-align: right;
+}
+
+.quick-questions-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--border-hover);
+}
+
+.quick-questions-btn i:first-child {
+    color: var(--gradient-start);
+    margin-left: 0.5rem;
+}
+
+.quick-questions-btn i:last-child {
+    color: var(--subtle-text-color);
+    font-size: 0.8rem;
+}
+
+.suggestions-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    animation: fadeIn 0.3s ease;
+}
+
+.suggestions-modal {
+    width: 100%;
+    background: var(--card-bg);
+    border-radius: 20px 20px 0 0;
+    max-height: 70vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-header {
+    padding: 1.5rem 1.25rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--card-bg);
+    z-index: 10;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--subtle-text-color);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+    background: var(--border-color);
+    color: var(--text-color);
+}
+
+.modal-suggestions {
+    padding: 1rem 1.25rem 1.5rem;
+}
+
+.modal-prompt-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.modal-prompt-card:hover {
+    background: var(--blue-subtle);
+    border-color: var(--border-color);
+}
+
+.modal-prompt-card:active {
+    transform: scale(0.98);
+}
+
+.modal-card-content {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    text-align: right;
+}
+
+.modal-card-content i {
+    color: var(--gradient-start);
+    margin-left: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.modal-card-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.modal-prompt-card > i {
+    color: var(--subtle-text-color);
+    font-size: 0.8rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
 /* --- Responsive Design for Mobile --- */
 @media (max-width: 768px) {
     .container {
@@ -473,6 +632,17 @@ body.chat-mode {
 
     .main-header p {
         font-size: 1rem;
+    }
+
+    /* Hide desktop suggestions on mobile */
+    .desktop-suggestions {
+        display: none;
+    }
+
+    /* Show mobile trigger on mobile */
+    .mobile-suggestions-trigger {
+        display: block;
+        margin-top: 2rem;
     }
 
     .prompt-suggestions {

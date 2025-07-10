@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 interface InitialScreenProps {
   isVisible: boolean
   onPromptClick: (text: string) => void
@@ -23,7 +25,14 @@ const promptSuggestions = [
 ]
 
 export default function InitialScreen({ isVisible, onPromptClick }: InitialScreenProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
   if (!isVisible) return null
+
+  const handlePromptClick = (text: string) => {
+    onPromptClick(text)
+    setIsModalOpen(false) // Close modal after selection
+  }
 
   return (
     <div id="initial-screen">
@@ -33,19 +42,63 @@ export default function InitialScreen({ isVisible, onPromptClick }: InitialScree
         <p>یکی از سوالات متداول زیر را انتخاب کنید یا سوال خود را بپرسید</p>
       </header>
 
-      {/* Prompt Suggestions */}
-      <section className="prompt-suggestions">
+      {/* Desktop Prompt Suggestions - Always visible on desktop */}
+      <section className="prompt-suggestions desktop-suggestions">
         {promptSuggestions.map((suggestion, index) => (
           <div 
             key={index}
             className="prompt-card"
-            onClick={() => onPromptClick(suggestion.text)}
+            onClick={() => handlePromptClick(suggestion.text)}
           >
             <p>{suggestion.text}</p>
             <i className={suggestion.icon}></i>
           </div>
         ))}
       </section>
+
+      {/* Mobile Quick Questions Button */}
+      <div className="mobile-suggestions-trigger">
+        <button 
+          className="quick-questions-btn"
+          onClick={() => setIsModalOpen(true)}
+        >
+          <i className="fa-solid fa-lightbulb"></i>
+          <span>سوالات متداول</span>
+          <i className="fa-solid fa-chevron-up"></i>
+        </button>
+      </div>
+
+      {/* Mobile Modal/Drawer */}
+      {isModalOpen && (
+        <div className="suggestions-modal-overlay" onClick={() => setIsModalOpen(false)}>
+          <div className="suggestions-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>سوالات متداول پزشکی</h3>
+              <button 
+                className="modal-close-btn"
+                onClick={() => setIsModalOpen(false)}
+              >
+                <i className="fa-solid fa-times"></i>
+              </button>
+            </div>
+            <div className="modal-suggestions">
+              {promptSuggestions.map((suggestion, index) => (
+                <div 
+                  key={index}
+                  className="modal-prompt-card"
+                  onClick={() => handlePromptClick(suggestion.text)}
+                >
+                  <div className="modal-card-content">
+                    <i className={suggestion.icon}></i>
+                    <p>{suggestion.text}</p>
+                  </div>
+                  <i className="fa-solid fa-chevron-left"></i>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Divider */}
       <hr className="divider" />
