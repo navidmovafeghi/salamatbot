@@ -15,12 +15,12 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
     const timer2 = setTimeout(() => {
       setAnimationPhase('splitOut')
-    }, 2000) // Show for 1.5 seconds after fade in
+    }, 3000) // Show for 2.5 seconds after fade in
 
     const timer3 = setTimeout(() => {
       setIsVisible(false)
       onComplete()
-    }, 3000) // Split animation duration
+    }, 4000) // Split animation duration
 
     return () => {
       clearTimeout(timer1)

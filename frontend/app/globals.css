@@ -907,22 +907,35 @@ body.chat-mode {
 
     /* Mobile Chat Form Enhancements */
     .chat-form {
-        display: flex;
-        flex-direction: column;
-        min-height: 40vh; /* Take up more vertical space */
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: 9vh !important; /* Half of 18vh */
     }
 
     .chat-input-area {
-        padding: 1rem;
-        border-radius: 16px;
-        min-height: 180px; /* Increased height for mobile */
-        flex: 1; /* Allow it to grow */
+        padding: 0.5rem !important;
+        border-radius: 16px !important;
+        min-height: 50px !important; /* Half of 100px */
+        flex: 1 !important; /* Allow it to grow */
     }
 
     .chat-input-area textarea {
-        font-size: 0.95rem;
-        min-height: 120px; /* Taller textarea */
-        padding-top: 0.75rem;
+        font-size: 0.9rem !important;
+        min-height: 30px !important; /* Half of 60px */
+        padding-top: 0.25rem !important;
+    }
+
+    /* Override the chat-active specific rules */
+    .container.chat-active .chat-input-area {
+        min-height: 50px !important;
+        padding: 0.5rem !important;
+    }
+
+    .container.chat-active .chat-input-area textarea {
+        height: auto !important;
+        min-height: 30px !important;
+        padding-top: 0.25rem !important;
+        padding-bottom: 0.25rem !important;
     }
 
     .submit-button {
@@ -945,7 +958,7 @@ body.chat-mode {
     }
 
     #chat-history {
-        max-height: 350px;
+        max-height: 600px; /* Increased even more to utilize the extra space */
     }
 
     .chat-message {
@@ -965,9 +978,9 @@ body.chat-mode {
     }
 
     .container.chat-active .chat-form {
-        min-height: 35vh; /* Ensure minimum height in chat mode */
-        margin-top: auto;
-        padding: 1rem;
+        min-height: 7.5vh !important; /* Half of 15vh */
+        margin-top: auto !important;
+        padding: 0.75rem !important;
     }
 
     .container.chat-active .disclaimer {
