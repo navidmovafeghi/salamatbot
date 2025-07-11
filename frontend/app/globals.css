@@ -628,53 +628,30 @@ body.chat-mode {
     bottom: 0;
     z-index: 9999;
     overflow: hidden;
+    background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 25%, #8b5cf6 50%, #a855f7 75%, var(--gradient-start) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .splash-screen.fadeIn {
-    animation: splashFadeIn 0.5s ease-out forwards;
+    animation: splashFadeIn 0.3s ease-out forwards;
 }
 
 .splash-screen.visible {
     opacity: 1;
 }
 
-.splash-screen.splitOut .top-half {
-    animation: splitToTop 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+.splash-screen.wipeOut {
+    animation: slideDown 0.7s ease-in-out forwards;
 }
 
-.splash-screen.splitOut .bottom-half {
-    animation: splitToBottom 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-}
-
-.splash-half {
-    position: absolute;
-    left: 0;
-    right: 0;
-    background: linear-gradient(135deg, #60a5fa 0%, #93c5fd 25%, #bfdbfe 50%, #dbeafe 75%, #eff6ff 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.top-half {
-    top: 0;
-    height: 100%;
-    clip-path: polygon(0 0, 100% 0, 100% 50.1%, 0 50.1%);
-}
-
-.bottom-half {
-    top: 0;
-    height: 100%;
-    clip-path: polygon(0 49.9%, 100% 49.9%, 100% 100%, 0 100%);
-    z-index: -1; /* Put bottom half behind top half */
-}
 
 .splash-content {
     text-align: center;
     color: white;
     position: relative;
-    z-index: 10;
+    z-index: 5;
 }
 
 .splash-logo {
@@ -684,22 +661,24 @@ body.chat-mode {
 }
 
 .logo-icon {
-    width: 80px;
-    height: 80px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(15px);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 1rem;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.4);
     animation: logoFloat 3s ease-in-out infinite;
+    box-shadow: 0 8px 32px rgba(255, 255, 255, 0.1);
 }
 
 .logo-icon i {
-    font-size: 2.5rem;
+    font-size: 3rem;
     color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .logo-pulse {
@@ -730,12 +709,34 @@ body.chat-mode {
     animation: textSlideUp 0.8s ease-out 0.5s both;
 }
 
+.splash-features {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    opacity: 0.9;
+    animation: textSlideUp 0.8s ease-out 0.6s both;
+}
+
+.feature-item i {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
 .splash-subtitle {
     font-size: 0.9rem;
     opacity: 0.8;
     font-weight: 300;
     letter-spacing: 0.5px;
-    animation: textSlideUp 0.8s ease-out 0.7s both;
+    animation: textSlideUp 0.8s ease-out 0.8s both;
 }
 
 .splash-background {
@@ -789,21 +790,12 @@ body.chat-mode {
     }
 }
 
-@keyframes splitToTop {
+@keyframes slideDown {
     0% {
         transform: translateY(0);
     }
     100% {
-        transform: translateY(-100%);
-    }
-}
-
-@keyframes splitToBottom {
-    0% {
-        transform: translateY(0);
-    }
-    100% {
-        transform: translateY(100%);
+        transform: translateY(100vh);
     }
 }
 
@@ -988,6 +980,69 @@ body.chat-mode {
 
 /* --- Responsive Design for Mobile --- */
 @media (max-width: 768px) {
+    /* Splash Screen Mobile Styles */
+    .splash-content {
+        padding: 1rem;
+        max-width: 90%;
+    }
+    
+    .logo-icon {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .logo-icon i {
+        font-size: 2rem;
+    }
+    
+    .logo-pulse {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .splash-logo {
+        margin-bottom: 1.5rem;
+    }
+    
+    .splash-text h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+    }
+    
+    .splash-text p {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        line-height: 1.4;
+    }
+    
+    .splash-features {
+        flex-direction: column;
+        gap: 0.75rem;
+        margin: 1rem 0;
+        align-items: center;
+    }
+    
+    .feature-item {
+        font-size: 0.85rem;
+        gap: 0.4rem;
+    }
+    
+    .feature-item i {
+        font-size: 0.9rem;
+    }
+    
+    .splash-subtitle {
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+    }
+    
+    .floating-icon {
+        font-size: 2rem;
+        opacity: 0.05;
+    }
+
     .container {
         padding: 1rem;
         gap: 1.5rem;
@@ -1117,6 +1172,63 @@ body.chat-mode {
 
 /* --- Small Mobile Devices --- */
 @media (max-width: 480px) {
+    /* Small Mobile Splash Screen */
+    .splash-content {
+        padding: 0.75rem;
+        max-width: 95%;
+    }
+    
+    .logo-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .logo-icon i {
+        font-size: 1.5rem;
+    }
+    
+    .logo-pulse {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .splash-logo {
+        margin-bottom: 1rem;
+    }
+    
+    .splash-text h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .splash-text p {
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .splash-features {
+        gap: 0.5rem;
+        margin: 0.75rem 0;
+    }
+    
+    .feature-item {
+        font-size: 0.75rem;
+        gap: 0.3rem;
+    }
+    
+    .feature-item i {
+        font-size: 0.8rem;
+    }
+    
+    .splash-subtitle {
+        font-size: 0.7rem;
+    }
+    
+    .floating-icon {
+        font-size: 1.5rem;
+        opacity: 0.03;
+    }
+
     .container {
         padding: 0.75rem;
     }

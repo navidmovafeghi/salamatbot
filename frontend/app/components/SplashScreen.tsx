@@ -6,21 +6,21 @@ interface SplashScreenProps {
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
   const [isVisible, setIsVisible] = useState(true)
-  const [animationPhase, setAnimationPhase] = useState<'fadeIn' | 'visible' | 'splitOut'>('fadeIn')
+  const [animationPhase, setAnimationPhase] = useState<'fadeIn' | 'visible' | 'wipeOut'>('fadeIn')
 
   useEffect(() => {
     const timer1 = setTimeout(() => {
       setAnimationPhase('visible')
-    }, 500) // Fade in duration
+    }, 300) // Quick fade in
 
     const timer2 = setTimeout(() => {
-      setAnimationPhase('splitOut')
-    }, 3000) // Show for 2.5 seconds after fade in
+      setAnimationPhase('wipeOut')
+    }, 2500) // Show for 2.2 seconds
 
     const timer3 = setTimeout(() => {
       setIsVisible(false)
       onComplete()
-    }, 4000) // Split animation duration
+    }, 3200) // Wipe animation duration
 
     return () => {
       clearTimeout(timer1)
@@ -33,77 +33,56 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
   return (
     <div className={`splash-screen ${animationPhase}`}>
-      {/* Top Half - Will slide up */}
-      <div className="splash-half top-half">
-        <div className="splash-content">
-          <div className="splash-logo">
-            <div className="logo-icon">
-              <i className="fa-solid fa-user-doctor"></i>
-            </div>
-            <div className="logo-pulse"></div>
+      {/* Main Content */}
+      <div className="splash-content">
+        <div className="splash-logo">
+          <div className="logo-icon">
+            <i className="fa-solid fa-brain"></i>
           </div>
-          
-          <div className="splash-text">
-            <h1>سلامت‌بات</h1>
-            <p>همراه سلامتی شما</p>
+          <div className="logo-pulse"></div>
+        </div>
+        
+        <div className="splash-text">
+          <h1>راه‌حل هوشمند سلامت</h1>
+          <p>مشاوره پزشکی ۲۴/۷ با هوش مصنوعی</p>
+        </div>
+        
+        <div className="splash-features">
+          <div className="feature-item">
+            <i className="fa-solid fa-clock"></i>
+            <span>دسترسی ۲۴ ساعته</span>
           </div>
-          
-          <div className="splash-subtitle">
-            <span>SalamatBot - Your Health Companion</span>
+          <div className="feature-item">
+            <i className="fa-solid fa-user-shield"></i>
+            <span>محرمانگی کامل</span>
+          </div>
+          <div className="feature-item">
+            <i className="fa-solid fa-bolt"></i>
+            <span>پاسخ فوری</span>
           </div>
         </div>
         
-        <div className="splash-background">
-          <div className="floating-icon floating-icon-1">
-            <i className="fa-solid fa-heartbeat"></i>
-          </div>
-          <div className="floating-icon floating-icon-2">
-            <i className="fa-solid fa-pills"></i>
-          </div>
-          <div className="floating-icon floating-icon-3">
-            <i className="fa-solid fa-stethoscope"></i>
-          </div>
-          <div className="floating-icon floating-icon-4">
-            <i className="fa-solid fa-heart-pulse"></i>
-          </div>
+        <div className="splash-subtitle">
+          <span>AI-Powered Healthcare Solutions</span>
         </div>
       </div>
-
-      {/* Bottom Half - Will slide down */}
-      <div className="splash-half bottom-half">
-        <div className="splash-content">
-          <div className="splash-logo">
-            <div className="logo-icon">
-              <i className="fa-solid fa-user-doctor"></i>
-            </div>
-            <div className="logo-pulse"></div>
-          </div>
-          
-          <div className="splash-text">
-            <h1>سلامت‌بات</h1>
-            <p>همراه سلامتی شما</p>
-          </div>
-          
-          <div className="splash-subtitle">
-            <span>SalamatBot - Your Health Companion</span>
-          </div>
+      
+      {/* Background */}
+      <div className="splash-background">
+        <div className="floating-icon floating-icon-1">
+          <i className="fa-solid fa-microchip"></i>
         </div>
-        
-        <div className="splash-background">
-          <div className="floating-icon floating-icon-1">
-            <i className="fa-solid fa-heartbeat"></i>
-          </div>
-          <div className="floating-icon floating-icon-2">
-            <i className="fa-solid fa-pills"></i>
-          </div>
-          <div className="floating-icon floating-icon-3">
-            <i className="fa-solid fa-stethoscope"></i>
-          </div>
-          <div className="floating-icon floating-icon-4">
-            <i className="fa-solid fa-heart-pulse"></i>
-          </div>
+        <div className="floating-icon floating-icon-2">
+          <i className="fa-solid fa-chart-line"></i>
+        </div>
+        <div className="floating-icon floating-icon-3">
+          <i className="fa-solid fa-shield-heart"></i>
+        </div>
+        <div className="floating-icon floating-icon-4">
+          <i className="fa-solid fa-network-wired"></i>
         </div>
       </div>
+      
     </div>
   )
 }
