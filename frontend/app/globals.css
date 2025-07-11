@@ -628,7 +628,7 @@ body.chat-mode {
     bottom: 0;
     z-index: 9999;
     overflow: hidden;
-    background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 25%, #8b5cf6 50%, #a855f7 75%, var(--gradient-start) 100%);
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 25%, #7dd3fc 50%, #38bdf8 75%, #0ea5e9 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -649,7 +649,7 @@ body.chat-mode {
 
 .splash-content {
     text-align: center;
-    color: white;
+    color: #1e293b;
     position: relative;
     z-index: 5;
 }
@@ -677,8 +677,8 @@ body.chat-mode {
 
 .logo-icon i {
     font-size: 3rem;
-    color: white;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    color: #0f172a;
+    text-shadow: 0 2px 8px rgba(255, 255, 255, 0.6);
 }
 
 .logo-pulse {
@@ -697,15 +697,17 @@ body.chat-mode {
     font-size: 2.5rem;
     font-weight: 700;
     margin: 0 0 0.5rem 0;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 2px 8px rgba(255, 255, 255, 0.8);
+    color: #0f172a;
     animation: textSlideUp 0.8s ease-out 0.3s both;
 }
 
 .splash-text p {
     font-size: 1.2rem;
     margin: 0 0 1.5rem 0;
-    opacity: 0.9;
-    font-weight: 400;
+    opacity: 0.8;
+    font-weight: 500;
+    color: #334155;
     animation: textSlideUp 0.8s ease-out 0.5s both;
 }
 
@@ -723,19 +725,22 @@ body.chat-mode {
     gap: 0.5rem;
     font-size: 0.9rem;
     opacity: 0.9;
+    color: #475569;
+    font-weight: 500;
     animation: textSlideUp 0.8s ease-out 0.6s both;
 }
 
 .feature-item i {
     font-size: 1rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: #0ea5e9;
 }
 
 .splash-subtitle {
     font-size: 0.9rem;
-    opacity: 0.8;
-    font-weight: 300;
+    opacity: 0.7;
+    font-weight: 400;
     letter-spacing: 0.5px;
+    color: #64748b;
     animation: textSlideUp 0.8s ease-out 0.8s both;
 }
 
