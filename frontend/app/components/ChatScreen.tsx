@@ -6,9 +6,10 @@ interface ChatScreenProps {
   messages: Message[]
   onClearHistory: () => void
   onReturnHome: () => void
+  onStartNewChat: () => void
 }
 
-export default function ChatScreen({ isVisible, messages, onClearHistory, onReturnHome }: ChatScreenProps) {
+export default function ChatScreen({ isVisible, messages, onClearHistory, onReturnHome, onStartNewChat }: ChatScreenProps) {
   const chatHistoryRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -27,26 +28,39 @@ export default function ChatScreen({ isVisible, messages, onClearHistory, onRetu
     onReturnHome()
   }
 
+  const handleStartNewChat = () => {
+    if (confirm('آیا مطمئن هستید که می‌خواهید گفتگوی جدیدی شروع کنید؟ تمام تاریخچه پاک خواهد شد.')) {
+      onStartNewChat()
+    }
+  }
+
   if (!isVisible) return null
 
   return (
     <div id="chat-screen">
-      {/* Split buttons: Clear History + Return Home */}
+      {/* Three buttons: Start New Chat + Clear History + Return Home */}
       <div className="chat-header">
-        <div className="split-buttons">
+        <div className="triple-buttons">
           <button 
-            className="split-btn left-btn question-card-style" 
+            className="triple-btn left-btn question-card-style" 
+            onClick={handleStartNewChat}
+          >
+            <i className="fa-solid fa-plus"></i>
+            <span>گفتگوی جدید</span>
+          </button>
+          <button 
+            className="triple-btn middle-btn question-card-style" 
             onClick={handleClearHistory}
           >
             <i className="fa-solid fa-trash"></i>
-            <span>پاک کردن تاریخچه</span>
+            <span>پاک کردن</span>
           </button>
           <button 
-            className="split-btn right-btn question-card-style" 
+            className="triple-btn right-btn question-card-style" 
             onClick={handleReturnHome}
           >
             <i className="fa-solid fa-home"></i>
-            <span>بازگشت به خانه</span>
+            <span>خانه</span>
           </button>
         </div>
       </div>

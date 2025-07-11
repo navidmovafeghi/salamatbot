@@ -105,6 +105,17 @@ export default function Home() {
     // Keep messages intact - don't clear history
   }
 
+  // Function to start a new chat (clear everything)
+  const startNewChat = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY)
+      setMessages([])
+      setIsChatMode(false)
+    } catch (error) {
+      console.error('Error starting new chat:', error)
+    }
+  }
+
   // Function to continue existing chat
   const continueChat = () => {
     setIsChatMode(true)
@@ -220,6 +231,7 @@ export default function Home() {
         messages={messages} 
         onClearHistory={clearConversationHistory}
         onReturnHome={returnToHome}
+        onStartNewChat={startNewChat}
       />
       <ChatForm 
         onSendMessage={handleSendMessage}

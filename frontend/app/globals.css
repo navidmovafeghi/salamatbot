@@ -921,7 +921,14 @@ body.chat-mode {
     gap: 0.5rem;
 }
 
-.split-btn.question-card-style {
+.triple-buttons {
+    display: flex;
+    width: 100%;
+    gap: 0.25rem;
+}
+
+.split-btn.question-card-style,
+.triple-btn.question-card-style {
     flex: 1;
     background: transparent;
     border: 1px solid var(--border-color);
@@ -950,7 +957,23 @@ body.chat-mode {
     border-radius: 12px 0 0 12px;
 }
 
-.split-btn.question-card-style:hover {
+.triple-btn.left-btn {
+    border-radius: 0 12px 12px 0;
+    border-left: none;
+}
+
+.triple-btn.middle-btn {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+}
+
+.triple-btn.right-btn {
+    border-radius: 12px 0 0 12px;
+}
+
+.split-btn.question-card-style:hover,
+.triple-btn.question-card-style:hover {
     border-color: var(--border-hover);
     box-shadow: var(--shadow-md);
     transform: translateY(-1px);
@@ -959,26 +982,37 @@ body.chat-mode {
     position: relative;
 }
 
-.split-btn.left-btn:hover {
+.split-btn.left-btn:hover,
+.triple-btn.left-btn:hover,
+.triple-btn.middle-btn:hover {
     border-left: 1px solid var(--border-hover);
 }
 
-.split-btn.question-card-style:active {
+.triple-btn.middle-btn:hover,
+.triple-btn.right-btn:hover {
+    border-right: 1px solid var(--border-hover);
+}
+
+.split-btn.question-card-style:active,
+.triple-btn.question-card-style:active {
     transform: translateY(0);
     box-shadow: var(--shadow-sm);
 }
 
-.split-btn.question-card-style i {
+.split-btn.question-card-style i,
+.triple-btn.question-card-style i {
     font-size: 0.9rem;
     color: var(--subtle-text-color);
     transition: color 0.3s ease;
 }
 
-.split-btn.question-card-style:hover i {
+.split-btn.question-card-style:hover i,
+.triple-btn.question-card-style:hover i {
     color: var(--gradient-start);
 }
 
-.split-btn.question-card-style span {
+.split-btn.question-card-style span,
+.triple-btn.question-card-style span {
     font-weight: 500;
     white-space: nowrap;
 }
@@ -1046,6 +1080,25 @@ body.chat-mode {
     .floating-icon {
         font-size: 2rem;
         opacity: 0.05;
+    }
+
+    /* Mobile Triple Buttons for Tablet */
+    .triple-buttons {
+        gap: 0.2rem;
+    }
+    
+    .triple-btn.question-card-style {
+        padding: 0.85rem 0.75rem;
+        font-size: 0.8rem;
+        gap: 0.4rem;
+    }
+    
+    .triple-btn.question-card-style span {
+        font-size: 0.75rem;
+    }
+    
+    .triple-btn.question-card-style i {
+        font-size: 0.85rem;
     }
 
     .container {
@@ -1252,6 +1305,26 @@ body.chat-mode {
     .prompt-card i {
         margin-left: 0;
         font-size: 1.5rem;
+    }
+
+    /* Mobile Triple Buttons */
+    .triple-buttons {
+        gap: 0.15rem;
+    }
+    
+    .triple-btn.question-card-style {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.75rem;
+        gap: 0.25rem;
+    }
+    
+    .triple-btn.question-card-style span {
+        font-size: 0.7rem;
+        white-space: nowrap;
+    }
+    
+    .triple-btn.question-card-style i {
+        font-size: 0.8rem;
     }
 
     /* Enhanced small mobile chat form */
