@@ -4,9 +4,11 @@ import { Message } from '../page'
 interface ChatScreenProps {
   isVisible: boolean
   messages: Message[]
+  onClearHistory: () => void
+  onReturnHome: () => void
 }
 
-export default function ChatScreen({ isVisible, messages }: ChatScreenProps) {
+export default function ChatScreen({ isVisible, messages, onClearHistory, onReturnHome }: ChatScreenProps) {
   const chatHistoryRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -15,17 +17,67 @@ export default function ChatScreen({ isVisible, messages }: ChatScreenProps) {
     }
   }, [messages])
 
+  const handleClearHistory = () => {
+    if (confirm('آیا مطمئن هستید که می‌خواهید تمام تاریخچه گفتگو را پاک کنید؟')) {
+      onClearHistory()
+    }
+  }
+
+  const handleReturnHome = () => {
+    onReturnHome()
+  }
+
   if (!isVisible) return null
 
   return (
     <div id="chat-screen">
+      {/* Split buttons: Clear History + Return Home */}
+      <div className="chat-header">
+        <div className="split-buttons">
+          <button 
+            className="split-btn left-btn question-card-style" 
+            onClick={handleClearHistory}
+          >
+            <i className="fa-solid fa-trash"></i>
+            <span>پاک کردن تاریخچه</span>
+          </button>
+          <button 
+            className="split-btn right-btn question-card-style" 
+            onClick={handleReturnHome}
+          >
+            <i className="fa-solid fa-home"></i>
+            <span>بازگشت به خانه</span>
+          </button>
+        </div>
+      </div>
+      
       <div id="chat-history" ref={chatHistoryRef}>
         {messages.map((message) => (
           <div 
             key={message.id}
-            className={`chat-message ${message.type === 'user' ? 'user-message' : 'bot-message'}`}
+            className={`chat-message ${message.type === 'user' ? 'user-message' : 'bot-message'} ${
+              message.isLoading ? 'loading-message' : ''
+            } ${
+              message.isError ? 'error-message' : ''
+            } ${
+              message.isEmergency ? 'emergency-message' : ''
+            }`}
           >
-            {message.text}
+            {message.isLoading && (
+              <div className="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            )}
+            <div className="message-content">
+              {message.text}
+            </div>
+            {message.isEmergency && (
+              <div className="emergency-warning">
+                ⚠️ این پیام ممکن است نشان‌دهنده وضعیت اورژانسی باشد. در صورت نیاز فوراً با پزشک تماس بگیرید.
+              </div>
+            )}
           </div>
         ))}
       </div>

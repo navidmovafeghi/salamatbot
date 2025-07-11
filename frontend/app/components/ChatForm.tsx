@@ -2,9 +2,12 @@ import { useState, KeyboardEvent } from 'react'
 
 interface ChatFormProps {
   onSendMessage: (text: string) => void
+  onContinueChat?: () => void
+  hasExistingChat?: boolean
+  isChatMode?: boolean
 }
 
-export default function ChatForm({ onSendMessage }: ChatFormProps) {
+export default function ChatForm({ onSendMessage, onContinueChat, hasExistingChat, isChatMode }: ChatFormProps) {
   const [inputValue, setInputValue] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -25,6 +28,32 @@ export default function ChatForm({ onSendMessage }: ChatFormProps) {
       onSendMessage(trimmedMessage)
       setInputValue('')
     }
+  }
+
+  // Show continue chat button if on initial screen and has existing chat
+  const showContinueButton = !isChatMode && hasExistingChat && onContinueChat
+
+  if (showContinueButton) {
+    return (
+      <div className="chat-form">
+        <div className="continue-chat-input-area">
+          <button 
+            className="continue-chat-input-btn question-card-style"
+            onClick={onContinueChat}
+          >
+            <i className="fa-solid fa-comments"></i>
+            <span>ادامه گفتگوی قبلی</span>
+            <i className="fa-solid fa-arrow-left"></i>
+          </button>
+        </div>
+        
+        {/* Disclaimer */}
+        <footer className="disclaimer">
+          این چت‌بات یک ابزار اطلاعاتی است و جایگزین مشاوره، تشخیص یا درمان حرفه‌ای پزشکی نیست. 
+          همیشه برای هرگونه سوالی در مورد وضعیت پزشکی خود از پزشک یا سایر ارائه‌دهندگان خدمات بهداشتی واجد شرایط کمک بگیرید.
+        </footer>
+      </div>
+    )
   }
 
   return (

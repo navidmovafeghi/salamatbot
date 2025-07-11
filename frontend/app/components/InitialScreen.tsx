@@ -3,6 +3,8 @@ import { useState } from 'react'
 interface InitialScreenProps {
   isVisible: boolean
   onPromptClick: (text: string) => void
+  onContinueChat?: () => void
+  hasExistingChat?: boolean
 }
 
 const promptSuggestions = [
@@ -24,7 +26,7 @@ const promptSuggestions = [
   }
 ]
 
-export default function InitialScreen({ isVisible, onPromptClick }: InitialScreenProps) {
+export default function InitialScreen({ isVisible, onPromptClick, onContinueChat, hasExistingChat }: InitialScreenProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   if (!isVisible) return null
@@ -41,6 +43,7 @@ export default function InitialScreen({ isVisible, onPromptClick }: InitialScree
         <h1>سلام، <br />چه کمکی از من <span className="gradient-text">ساخته است؟</span></h1>
         <p>یکی از سوالات متداول زیر را انتخاب کنید یا سوال خود را بپرسید</p>
       </header>
+
 
       {/* Desktop Prompt Suggestions - Always visible on desktop */}
       <section className="prompt-suggestions desktop-suggestions">

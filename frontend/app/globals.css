@@ -861,6 +861,131 @@ body.chat-mode {
     }
 }
 
+/* --- Continue Chat Button in Input Area --- */
+.continue-chat-input-area {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+}
+
+.continue-chat-input-btn.question-card-style {
+    width: 100%;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    border: 1px solid var(--gradient-start);
+    border-radius: 20px;
+    padding: 1.2rem 1.5rem;
+    font-family: 'Kalameh', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--button-text);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    direction: rtl;
+    min-height: 60px;
+}
+
+.continue-chat-input-btn.question-card-style:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    background: linear-gradient(135deg, #c44ba0, #7a6fd8);
+}
+
+.continue-chat-input-btn.question-card-style:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-md);
+}
+
+.continue-chat-input-btn.question-card-style i {
+    font-size: 1.1rem;
+    color: var(--button-text);
+}
+
+.continue-chat-input-btn.question-card-style span {
+    flex: 1;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* --- Split Buttons (Question Card Style) --- */
+.chat-header {
+    padding: 1rem;
+    width: 100%;
+    max-width: 100%;
+}
+
+.split-buttons {
+    display: flex;
+    width: 100%;
+    gap: 0.5rem;
+}
+
+.split-btn.question-card-style {
+    flex: 1;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 1rem 1.25rem;
+    font-family: 'Kalameh', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-align: center;
+    direction: rtl;
+}
+
+.split-btn.left-btn {
+    border-radius: 0 12px 12px 0;
+    border-left: none;
+}
+
+.split-btn.right-btn {
+    border-radius: 12px 0 0 12px;
+}
+
+.split-btn.question-card-style:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+    background: var(--card-bg-subtle);
+    z-index: 1;
+    position: relative;
+}
+
+.split-btn.left-btn:hover {
+    border-left: 1px solid var(--border-hover);
+}
+
+.split-btn.question-card-style:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+.split-btn.question-card-style i {
+    font-size: 0.9rem;
+    color: var(--subtle-text-color);
+    transition: color 0.3s ease;
+}
+
+.split-btn.question-card-style:hover i {
+    color: var(--gradient-start);
+}
+
+.split-btn.question-card-style span {
+    font-weight: 500;
+    white-space: nowrap;
+}
+
 /* --- Responsive Design for Mobile --- */
 @media (max-width: 768px) {
     .container {
