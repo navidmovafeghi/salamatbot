@@ -46,12 +46,6 @@ export default function ChatForm({ onSendMessage, onContinueChat, hasExistingCha
             <i className="fa-solid fa-arrow-left"></i>
           </button>
         </div>
-        
-        {/* Disclaimer */}
-        <footer className="disclaimer">
-          این چت‌بات یک ابزار اطلاعاتی است و جایگزین مشاوره، تشخیص یا درمان حرفه‌ای پزشکی نیست. 
-          همیشه برای هرگونه سوالی در مورد وضعیت پزشکی خود از پزشک یا سایر ارائه‌دهندگان خدمات بهداشتی واجد شرایط کمک بگیرید.
-        </footer>
       </div>
     )
   }
@@ -82,12 +76,6 @@ export default function ChatForm({ onSendMessage, onContinueChat, hasExistingCha
           </div>
         </div>
       </div>
-      
-      {/* Disclaimer */}
-      <footer className="disclaimer">
-        این چت‌بات یک ابزار اطلاعاتی است و جایگزین مشاوره، تشخیص یا درمان حرفه‌ای پزشکی نیست. 
-        همیشه برای هرگونه سوالی در مورد وضعیت پزشکی خود از پزشک یا سایر ارائه‌دهندگان خدمات بهداشتی واجد شرایط کمک بگیرید.
-      </footer>
     </form>
   )
 }
