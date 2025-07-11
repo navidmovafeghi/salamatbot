@@ -49,9 +49,9 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error in chat API:', error);
     console.error('Error details:', {
-      message: error.message,
-      stack: error.stack,
-      name: error.name
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : 'Unknown'
     });
 
     // Handle specific Gemini API errors
