@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getSessionList, generateSessionTitle, ChatSession } from '../lib/sessionManager'
+import { getSessionList } from '../lib/sessionManager'
 
 interface InitialScreenProps {
   isVisible: boolean

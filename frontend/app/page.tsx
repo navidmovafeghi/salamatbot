@@ -266,7 +266,7 @@ export default function Home() {
   const hasExistingChat = messages.length > 0
   
   // Check if we're in "return home" mode (user has been chatting and returned)
-  const isReturnHomeMode = !isChatMode && (hasExistingChat || currentSessionId)
+  const isReturnHomeMode = !isChatMode && (hasExistingChat || !!currentSessionId)
   
   // Handle suggestion clicks with new session logic
   const handleSuggestionClick = (text: string) => {
