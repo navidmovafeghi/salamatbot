@@ -2,6 +2,27 @@ import { useEffect, useRef, useState } from 'react'
 import { Message } from '../page'
 import { getSessionList } from '../lib/sessionManager'
 
+// Function to format message text with basic Markdown support
+function formatMessageText(text: string): string {
+  return text
+    // Bold text: **text** or *text*
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<strong>$1</strong>')
+    // Italic text: _text_
+    .replace(/_(.*?)_/g, '<em>$1</em>')
+    // Line breaks
+    .replace(/\n/g, '<br>')
+    // Escape any remaining HTML to prevent XSS
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    // Re-enable our formatted tags
+    .replace(/&lt;strong&gt;/g, '<strong>')
+    .replace(/&lt;\/strong&gt;/g, '</strong>')
+    .replace(/&lt;em&gt;/g, '<em>')
+    .replace(/&lt;\/em&gt;/g, '</em>')
+    .replace(/&lt;br&gt;/g, '<br>')
+}
+
 interface ChatScreenProps {
   isVisible: boolean
   messages: Message[]
@@ -34,8 +55,16 @@ export default function ChatScreen({ isVisible, messages, onClearHistory, onRetu
   }, [showHistoryMenu])
 
   useEffect(() => {
-    if (chatHistoryRef.current) {
-      chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight
+    // Try to scroll the chat screen container
+    const chatScreen = document.getElementById('chat-screen')
+    if (chatScreen) {
+      // Small delay to ensure DOM is updated before scrolling
+      setTimeout(() => {
+        chatScreen.scrollTo({
+          top: chatScreen.scrollHeight,
+          behavior: 'smooth'
+        })
+      }, 100)
     }
   }, [messages])
 
@@ -187,9 +216,12 @@ export default function ChatScreen({ isVisible, messages, onClearHistory, onRetu
                 <span></span>
               </div>
             )}
-            <div className="message-content">
-              {message.text}
-            </div>
+            <div 
+              className="message-content"
+              dangerouslySetInnerHTML={{
+                __html: formatMessageText(message.text)
+              }}
+            />
             {message.isEmergency && (
               <div className="emergency-warning">
                 ⚠️ این پیام ممکن است نشان‌دهنده وضعیت اورژانسی باشد. در صورت نیاز فوراً با پزشک تماس بگیرید.

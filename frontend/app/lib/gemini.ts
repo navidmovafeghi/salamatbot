@@ -17,12 +17,12 @@ if (!apiKey) {
 const geminiModel = new GoogleGenerativeAI(apiKey);
 
 const model = geminiModel.getGenerativeModel({
-  model: "gemini-1.5-pro",
+  model: "gemini-2.0-flash-exp", // Gemini 2.0 Flash experimental
   generationConfig: {
     temperature: 0.7,
     topP: 0.8,
     topK: 40,
-    maxOutputTokens: 2048,
+    maxOutputTokens: 8192, // Increased for better responses
   },
   safetySettings: [
     // FIX 2: The 'HARM_CATEGORY_MEDICAL' does not exist and has been removed.

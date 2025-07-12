@@ -9,6 +9,7 @@ interface ChatFormProps {
 
 export default function ChatForm({ onSendMessage, onContinueChat, hasExistingChat, isChatMode }: ChatFormProps) {
   const [inputValue, setInputValue] = useState('')
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -27,6 +28,18 @@ export default function ChatForm({ onSendMessage, onContinueChat, hasExistingCha
     if (trimmedMessage) {
       onSendMessage(trimmedMessage)
       setInputValue('')
+      setIsExpanded(false) // Collapse after sending
+    }
+  }
+
+  const handleFocus = () => {
+    setIsExpanded(true)
+  }
+
+  const handleBlur = () => {
+    // Only collapse if input is empty
+    if (!inputValue.trim()) {
+      setIsExpanded(false)
     }
   }
 
@@ -59,21 +72,16 @@ export default function ChatForm({ onSendMessage, onContinueChat, hasExistingCha
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          className={`chat-textarea ${isExpanded ? 'expanded' : 'collapsed'} ${isChatMode ? 'chat-mode' : ''}`}
+          rows={isExpanded ? 4 : 1}
         />
         
-        <div className="top-controls">
-          {/* Future: Add any top controls here */}
-        </div>
-
-        <div className="bottom-controls">
-          <div className="attachment-buttons">
-            {/* Future: Add attachment buttons here */}
-          </div>
-          <div className="submit-area">
-            <button type="submit" className="submit-button">
-              <i className="fa-solid fa-arrow-left"></i>
-            </button>
-          </div>
+        <div className="submit-area">
+          <button type="submit" className="submit-button">
+            <i className="fa-solid fa-arrow-left"></i>
+          </button>
         </div>
       </div>
     </form>

@@ -235,6 +235,46 @@ body.chat-mode {
     border-left: none;
 }
 
+/* --- Message Content Styles --- */
+.message-content {
+    direction: rtl;
+    text-align: right;
+    unicode-bidi: embed;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.6;
+    font-family: 'Kalameh', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* --- Chat Textarea Expand/Collapse Styles --- */
+.chat-textarea {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    resize: none;
+    overflow-y: hidden;
+}
+
+.chat-textarea.collapsed {
+    min-height: 50px;
+    max-height: 50px;
+}
+
+.chat-textarea.expanded {
+    min-height: 100px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.chat-textarea.chat-mode.collapsed {
+    min-height: 45px;
+    max-height: 45px;
+}
+
+.chat-textarea.chat-mode.expanded {
+    min-height: 90px;
+    max-height: 120px;
+}
+
 body.chat-mode {
     background: var(--bg-gradient-chat);
     background-attachment: fixed;
@@ -285,6 +325,13 @@ body.chat-mode {
     overflow-y: auto;
     padding: 0 1rem 0.5rem 1rem;
     min-height: 0;
+    /* Hide scrollbar while keeping functionality */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+#chat-screen::-webkit-scrollbar {
+    display: none; /* WebKit browsers (Chrome, Safari, Edge) */
 }
 
 .container.chat-active .disclaimer {
@@ -316,11 +363,12 @@ body.chat-mode {
     backdrop-filter: blur(15px);
     border: 2px solid var(--border-color);
     border-radius: 20px;
-    padding: 0.8rem 1rem 0 1rem;
+    padding: 0.8rem 1rem;
     box-shadow: var(--shadow-md);
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    min-height: 130px;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    min-height: 60px;
     position: relative;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -332,59 +380,20 @@ body.chat-mode {
 }
 
 .chat-input-area textarea {
-    width: 100%;
-    height: 100%;
+    flex: 1;
     border: none;
     background: none;
     resize: none;
     outline: none;
     font-size: 0.95rem;
     font-family: inherit;
-    grid-row: 2 / 3;
-    padding-top: 0.5rem;
+    padding: 0.5rem 0;
+    line-height: 1.4;
+    vertical-align: middle;
 }
 
 .chat-input-area textarea::placeholder {
     color: var(--subtle-text-color);
-}
-
-.top-controls {
-    grid-row: 1 / 2;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.web-filter {
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    padding: 0.3rem 0.8rem;
-    font-size: 0.8rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.bottom-controls {
-    grid-row: 3 / 4;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 0.8rem;
-    padding-bottom: 0.8rem;
-}
-
-.attachment-buttons button {
-    background: none;
-    border: none;
-    color: var(--subtle-text-color);
-    cursor: pointer;
-    font-size: 0.85rem;
-    margin-left: 0.8rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
 }
 
 .submit-area {
@@ -414,6 +423,7 @@ body.chat-mode {
     box-shadow: var(--shadow-sm);
     position: relative;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .submit-button::before {
