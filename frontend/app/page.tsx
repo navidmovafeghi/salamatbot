@@ -439,6 +439,13 @@ export default function Home() {
         />
       )}
       
+      {/* Medical Disclaimer - Always visible */}
+      {!isChatMode && (
+        <div className="disclaimer">
+          ⚕️ این دستیار هوشمند برای کمک اولیه و راهنمایی طراحی شده است. برای تشخیص دقیق، درمان و مراقبت‌های پزشکی، حتماً با پزشک متخصص مشورت کنید.
+        </div>
+      )}
+      
       {/* Save Dialog */}
       {showSaveDialog && (
         <div className="save-dialog-overlay">

@@ -6,21 +6,21 @@ interface SplashScreenProps {
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
   const [isVisible, setIsVisible] = useState(true)
-  const [animationPhase, setAnimationPhase] = useState<'fadeIn' | 'visible' | 'wipeOut'>('fadeIn')
+  const [animationPhase, setAnimationPhase] = useState<'fadeIn' | 'visible' | 'fadeOut'>('fadeIn')
 
   useEffect(() => {
     const timer1 = setTimeout(() => {
       setAnimationPhase('visible')
-    }, 300) // Quick fade in
+    }, 200) // Quick fade in
 
     const timer2 = setTimeout(() => {
-      setAnimationPhase('wipeOut')
-    }, 2500) // Show for 2.2 seconds
+      setAnimationPhase('fadeOut')
+    }, 2000) // Show for 1.8 seconds
 
     const timer3 = setTimeout(() => {
       setIsVisible(false)
       onComplete()
-    }, 3200) // Wipe animation duration
+    }, 2500) // Fade out duration
 
     return () => {
       clearTimeout(timer1)
@@ -33,56 +33,18 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
   return (
     <div className={`splash-screen ${animationPhase}`}>
-      {/* Main Content */}
       <div className="splash-content">
         <div className="splash-logo">
           <div className="logo-icon">
-            <i className="fa-solid fa-brain"></i>
+            <i className="fa-solid fa-stethoscope"></i>
           </div>
-          <div className="logo-pulse"></div>
         </div>
         
         <div className="splash-text">
-          <h1>راه‌حل هوشمند سلامت</h1>
-          <p>مشاوره پزشکی ۲۴/۷ با هوش مصنوعی</p>
-        </div>
-        
-        <div className="splash-features">
-          <div className="feature-item">
-            <i className="fa-solid fa-clock"></i>
-            <span>دسترسی ۲۴ ساعته</span>
-          </div>
-          <div className="feature-item">
-            <i className="fa-solid fa-user-shield"></i>
-            <span>محرمانگی کامل</span>
-          </div>
-          <div className="feature-item">
-            <i className="fa-solid fa-bolt"></i>
-            <span>پاسخ فوری</span>
-          </div>
-        </div>
-        
-        <div className="splash-subtitle">
-          <span>AI-Powered Healthcare Solutions</span>
+          <h1>دستیار پزشکی</h1>
+          <p>مشاوره هوشمند سلامت</p>
         </div>
       </div>
-      
-      {/* Background */}
-      <div className="splash-background">
-        <div className="floating-icon floating-icon-1">
-          <i className="fa-solid fa-microchip"></i>
-        </div>
-        <div className="floating-icon floating-icon-2">
-          <i className="fa-solid fa-chart-line"></i>
-        </div>
-        <div className="floating-icon floating-icon-3">
-          <i className="fa-solid fa-shield-heart"></i>
-        </div>
-        <div className="floating-icon floating-icon-4">
-          <i className="fa-solid fa-network-wired"></i>
-        </div>
-      </div>
-      
     </div>
   )
 }
