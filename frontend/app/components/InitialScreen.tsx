@@ -48,7 +48,12 @@ export default function InitialScreen({
   onDeleteSession 
 }: InitialScreenProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [sessionList, setSessionList] = useState<ChatSession[]>([])
+  const [sessionList, setSessionList] = useState<Array<{
+    id: string
+    title: string
+    date: string
+    messageCount: number
+  }>>([])
 
   // Load sessions when history modal opens
   useEffect(() => {
@@ -207,10 +212,10 @@ export default function InitialScreen({
                         </div>
                         <div className="session-meta">
                           <span className="session-date">
-                            {session.lastModified ? new Date(session.lastModified).toLocaleDateString('fa-IR') : 'تاریخ نامشخص'}
+                            {session.date || 'تاریخ نامشخص'}
                           </span>
                           <span className="session-messages">
-                            {session.messages ? session.messages.length : 0} پیام
+                            {session.messageCount || 0} پیام
                           </span>
                         </div>
                       </div>
