@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Flow Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; direction: rtl; }
+        .test-step { margin: 15px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .expected { background: #e8f5e8; }
+        .actual { background: #f0f8ff; }
+        .issue { background: #ffe8e8; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Session Management Flow Test</h1>
+    
+    <div class="test-step expected">
+        <h3>✅ Expected Flow (Fixed):</h3>
+        <ol>
+            <li><strong>Start Conversation:</strong> Create new session, mark as unsaved</li>
+            <li><strong>Send Messages:</strong> Keep session unsaved until user decides</li>
+            <li><strong>Click "New Chat":</strong> Prompt to save (because unsaved)</li>
+            <li><strong>Choose "Save":</strong> Save session, mark as saved, clear state</li>
+            <li><strong>Start New Conversation:</strong> Create completely new session</li>
+            <li><strong>Check History:</strong> Both sessions appear in list</li>
+        </ol>
+    </div>
+
+    <div class="test-step actual">
+        <h3>🔧 Key Changes Made:</h3>
+        <ul>
+            <li><strong>Added isSessionSaved state:</strong> Tracks if current session is saved</li>
+            <li><strong>Fixed session creation:</strong> Always creates new session for new conversations</li>
+            <li><strong>Proper state management:</strong> Clear separation between saved/unsaved sessions</li>
+            <li><strong>No auto-loading:</strong> Doesn't automatically load recent sessions after "New Chat"</li>
+            <li><strong>Smart prompting:</strong> Only prompts to save if session is unsaved</li>
+        </ul>
+    </div>
+
+    <div class="test-step">
+        <h3>🎯 Test Checklist:</h3>
+        <ol>
+            <li>□ Start conversation → New session created</li>
+            <li>□ Send messages → Session marked as unsaved</li>
+            <li>□ Click "New Chat" → Save dialog appears</li>
+            <li>□ Click "Save" → Session saved, return to home</li>
+            <li>□ Start new conversation → New session created (not loading old one)</li>
+            <li>□ Click "History" → Both sessions visible</li>
+            <li>□ Click on old session → Loads correctly</li>
+            <li>□ Click "New Chat" again → Prompts to save new session</li>
+        </ol>
+    </div>
+
+    <div class="test-step">
+        <h3>🔍 Debug Console Logs to Watch:</h3>
+        <ul>
+            <li><code>Creating new session for first message: session_xxx</code></li>
+            <li><code>User chose to save session: session_xxx</code></li>
+            <li><code>New chat started - completely fresh state</code></li>
+            <li><code>Loaded session: session_xxx</code></li>
+        </ul>
+    </div>
+
+    <div class="test-step">
+        <h3>📱 Manual Test Steps:</h3>
+        <ol>
+            <li><strong>Open your app</strong> at localhost:3000</li>
+            <li><strong>Send a question</strong> (e.g., "درباره سردرد سوال دارم")</li>
+            <li><strong>Wait for response</strong> (even if API fails)</li>
+            <li><strong>Click "گفتگوی جدید"</strong> → Should see save dialog</li>
+            <li><strong>Click "ذخیره کن"</strong> → Should return to home page</li>
+            <li><strong>Send another question</strong> (e.g., "مشکل گوارشی دارم")</li>
+            <li><strong>Click "تاریخچه"</strong> → Should see first session in list</li>
+            <li><strong>Continue conversation</strong> → Add more messages</li>
+            <li><strong>Click "تاریخچه"</strong> → Should still see first session</li>
+            <li><strong>Click on first session</strong> → Should load it correctly</li>
+        </ol>
+    </div>
+
+    <script>
+        // Helper to check localStorage
+        function checkSessions() {
+            const sessions = localStorage.getItem('medical-chat-sessions');
+            const active = localStorage.getItem('medical-chat-active');
+            console.log('Current sessions:', sessions ? JSON.parse(sessions) : 'None');
+            console.log('Active session:', active || 'None');
+        }
+
+        // Add button to inspect
+        const button = document.createElement('button');
+        button.textContent = 'Check localStorage';
+        button.onclick = checkSessions;
+        button.style.margin = '10px';
+        button.style.padding = '10px 20px';
+        document.body.appendChild(button);
+    </script>
+</body>
+</html>

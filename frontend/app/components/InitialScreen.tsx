@@ -1,10 +1,18 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { getSessionList, generateSessionTitle, ChatSession } from '../lib/sessionManager'
 
 interface InitialScreenProps {
   isVisible: boolean
   onPromptClick: (text: string) => void
   onContinueChat?: () => void
+  onStartNewChat?: () => void
+  onViewHistory?: () => void
+  showHistoryModal?: boolean
+  onCloseHistoryModal?: () => void
   hasExistingChat?: boolean
+  isReturnHomeMode?: boolean
+  onLoadSession?: (sessionId: string) => void
+  onDeleteSession?: (sessionId: string) => void
 }
 
 const promptSuggestions = [
@@ -26,8 +34,34 @@ const promptSuggestions = [
   }
 ]
 
-export default function InitialScreen({ isVisible, onPromptClick, onContinueChat, hasExistingChat }: InitialScreenProps) {
+export default function InitialScreen({ 
+  isVisible, 
+  onPromptClick, 
+  onContinueChat, 
+  onStartNewChat,
+  onViewHistory,
+  showHistoryModal,
+  onCloseHistoryModal,
+  hasExistingChat, 
+  isReturnHomeMode,
+  onLoadSession,
+  onDeleteSession 
+}: InitialScreenProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [sessionList, setSessionList] = useState<ChatSession[]>([])
+
+  // Load sessions when history modal opens
+  useEffect(() => {
+    if (showHistoryModal) {
+      try {
+        const sessions = getSessionList() || []
+        setSessionList(sessions)
+      } catch (error) {
+        console.error('Error loading sessions:', error)
+        setSessionList([])
+      }
+    }
+  }, [showHistoryModal])
 
   if (!isVisible) return null
 
@@ -105,6 +139,101 @@ export default function InitialScreen({ isVisible, onPromptClick, onContinueChat
 
       {/* Divider */}
       <hr className="divider" />
+
+      {/* Return Home Mode - Three Action Buttons */}
+      {isReturnHomeMode && (
+        <section className="return-home-actions">
+          <button 
+            className="action-btn primary-action"
+            onClick={onStartNewChat}
+          >
+            <i className="fa-solid fa-plus"></i>
+            <span>شروع گفتگوی جدید</span>
+            <i className="fa-solid fa-arrow-left"></i>
+          </button>
+          
+          {hasExistingChat && (
+            <button 
+              className="action-btn secondary-action"
+              onClick={onContinueChat}
+            >
+              <i className="fa-solid fa-comments"></i>
+              <span>ادامه گفتگوی قبلی</span>
+              <i className="fa-solid fa-arrow-left"></i>
+            </button>
+          )}
+          
+          <button 
+            className="action-btn tertiary-action"
+            onClick={onViewHistory}
+          >
+            <i className="fa-solid fa-history"></i>
+            <span>مشاهده تاریخچه گفتگوها</span>
+            <i className="fa-solid fa-arrow-left"></i>
+          </button>
+        </section>
+      )}
+
+      {/* History Modal */}
+      {showHistoryModal && (
+        <div className="history-modal-overlay" onClick={onCloseHistoryModal}>
+          <div className="history-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="history-modal-header">
+              <h3>تاریخچه گفتگوها</h3>
+              <button 
+                className="history-modal-close-btn"
+                onClick={onCloseHistoryModal}
+              >
+                <i className="fa-solid fa-times"></i>
+              </button>
+            </div>
+            <div className="history-modal-content">
+              {!sessionList || sessionList.length === 0 ? (
+                <div className="no-history">
+                  <i className="fa-solid fa-comments"></i>
+                  <p>هنوز گفتگویی ذخیره نشده است</p>
+                </div>
+              ) : (
+                <div className="history-sessions">
+                  {sessionList && sessionList.map((session) => (
+                    <div key={session.id} className="history-session-item">
+                      <div className="session-info" onClick={() => {
+                        onLoadSession?.(session.id)
+                        onCloseHistoryModal?.()
+                      }}>
+                        <div className="session-title">
+                          <i className="fa-solid fa-comment-dots"></i>
+                          <span>{session.title}</span>
+                        </div>
+                        <div className="session-meta">
+                          <span className="session-date">
+                            {session.lastModified ? new Date(session.lastModified).toLocaleDateString('fa-IR') : 'تاریخ نامشخص'}
+                          </span>
+                          <span className="session-messages">
+                            {session.messages ? session.messages.length : 0} پیام
+                          </span>
+                        </div>
+                      </div>
+                      <button 
+                        className="delete-session-btn"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onDeleteSession?.(session.id)
+                          // Refresh the session list
+                          const updatedSessions = getSessionList()
+                          setSessionList(updatedSessions)
+                        }}
+                      >
+                        <i className="fa-solid fa-trash"></i>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

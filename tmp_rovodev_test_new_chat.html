@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test New Chat Functionality</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; direction: rtl; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 8px; }
+        .step { margin: 10px 0; padding: 10px; background: #f0f8ff; border-radius: 4px; }
+        .expected { background: #e8f5e8; }
+        .issue { background: #ffe8e8; }
+        button { margin: 5px; padding: 8px 16px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test: New Chat Button Behavior</h1>
+    
+    <div class="test-section">
+        <h3>🔍 Issue Description:</h3>
+        <div class="issue">
+            <strong>Problem:</strong> When clicking "گفتگوی جدید" (New Chat), the current conversation gets deleted instead of being saved as a new session.
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>✅ Expected Behavior:</h3>
+        <div class="expected">
+            <ol>
+                <li><strong>Save Current Session:</strong> Current conversation should be saved with proper title</li>
+                <li><strong>Clear UI:</strong> Chat screen should clear and return to initial mode</li>
+                <li><strong>Preserve History:</strong> Previous conversation should appear in history dropdown</li>
+                <li><strong>Ready for New:</strong> User can start a fresh conversation</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>🧪 Manual Testing Steps:</h3>
+        <div class="step">
+            <strong>Step 1:</strong> Start a conversation with a few messages (e.g., "درباره سردرد سوال دارم")
+        </div>
+        <div class="step">
+            <strong>Step 2:</strong> Click "گفتگوی جدید" button
+        </div>
+        <div class="step">
+            <strong>Step 3:</strong> Check that you're back to initial screen (not chat mode)
+        </div>
+        <div class="step">
+            <strong>Step 4:</strong> Start a new conversation with different topic
+        </div>
+        <div class="step">
+            <strong>Step 5:</strong> Click "تاریخچه" button to see session list
+        </div>
+        <div class="step">
+            <strong>Step 6:</strong> Verify both conversations appear in the list
+        </div>
+        <div class="step">
+            <strong>Step 7:</strong> Click on the first conversation to load it
+        </div>
+        <div class="step">
+            <strong>Step 8:</strong> Verify all messages are preserved
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>🔧 What We Fixed:</h3>
+        <ul>
+            <li>✅ <strong>Proper Save Logic:</strong> Current session is saved before clearing</li>
+            <li>✅ <strong>No Empty Sessions:</strong> New session only created when user sends first message</li>
+            <li>✅ <strong>Clear State:</strong> All references cleared properly</li>
+            <li>✅ <strong>Debug Logging:</strong> Console logs to track the process</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h3>🎯 Key Changes Made:</h3>
+        <ol>
+            <li><strong>Save Before Clear:</strong> <code>saveCurrentSession(messages, currentSessionId)</code> called first</li>
+            <li><strong>Conditional Save:</strong> Only save if there are actual messages</li>
+            <li><strong>Delayed Session Creation:</strong> New session created only when user sends first message</li>
+            <li><strong>Clear Active Session:</strong> Remove active session reference from localStorage</li>
+            <li><strong>Debug Console:</strong> Added logging to track the save process</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h3>🚨 Things to Watch For:</h3>
+        <ul>
+            <li><strong>Console Logs:</strong> Check browser console for save confirmation</li>
+            <li><strong>Session Titles:</strong> Verify titles are generated from first meaningful message</li>
+            <li><strong>Message Count:</strong> Check that all messages are preserved</li>
+            <li><strong>Date Display:</strong> Verify Persian dates show correctly</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h3>📱 Test on Your App:</h3>
+        <p>Open your medical chatbot at <code>http://localhost:3000</code> and follow the testing steps above.</p>
+        <p><strong>Expected Result:</strong> Conversations should be properly saved and accessible through the history menu.</p>
+    </div>
+
+    <script>
+        // Simple localStorage inspector
+        function inspectSessions() {
+            const sessions = localStorage.getItem('medical-chat-sessions');
+            const active = localStorage.getItem('medical-chat-active');
+            
+            console.log('📋 Current Sessions:', sessions ? JSON.parse(sessions) : 'None');
+            console.log('🎯 Active Session:', active || 'None');
+        }
+
+        // Add button to inspect localStorage
+        const button = document.createElement('button');
+        button.textContent = 'Inspect localStorage';
+        button.onclick = inspectSessions;
+        document.body.appendChild(button);
+    </script>
+</body>
+</html>

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "GEMINI_INTEGRATION_TASKS.md",
+                "file": "CONVERSATION_STORAGE_DECISION.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "GEMINI_INTEGRATION_TASKS"
+              "title": "CONVERSATION_STORAGE_DECISION"
             }
           }
         ]
@@ -170,21 +170,21 @@
   },
   "active": "ab7d0cc94d721d61",
   "lastOpenFiles": [
+    "tmp_rovodev_session_flow_test.html",
+    "tmp_rovodev_test_new_chat.html",
+    "tmp_rovodev_test_sessions.html",
+    "tmp_code_346897e5f1920bf74254d4129fb9e6ad3567c93160e6372fe610123c423a143b.ps1",
+    "frontend/app/lib/sessionManager.ts",
+    "GEMINI_INTEGRATION_TASKS.md",
     "tmp_code_b3548b6a3bf078e8f838803d80989ef7a7bfd395e18e4e9c1f9914589417b570.ps1",
     "tmp_rovodev_mobile_test.html",
-    "tmp_code_346897e5f1920bf74254d4129fb9e6ad3567c93160e6372fe610123c423a143b.ps1",
     "CONVERSATION_STORAGE_DECISION.md",
     "tmp_rovodev_browser_test.js",
     "tmp_rovodev_api_test.html",
     "TASK_2.3_API_ROUTE_EXPLANATION.md",
     "GEMINI_IMPLEMENTATION_PROGRESS.md",
-    "GEMINI_INTEGRATION_TASKS.md",
     "frontend/app/api/chat/route.ts",
     "frontend/app/api/chat",
-    "frontend/app/api",
-    "frontend/app/lib/prompts.ts",
-    "frontend/node_modules/@google/generative-ai/dist/server/types/server/shared.d.ts",
-    "frontend/node_modules/@google/generative-ai/dist/server/types/server/files.d.ts",
     "frontend/node_modules/@google/generative-ai/README.md",
     "frontend/node_modules/@tybys/wasm-util/README.md",
     "frontend/node_modules/@emnapi/runtime/README.md",
