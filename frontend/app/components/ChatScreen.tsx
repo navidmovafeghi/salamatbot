@@ -56,17 +56,24 @@ export default function ChatScreen() {
   }, [showHistoryMenu])
 
   useEffect(() => {
-    // Try to scroll the chat screen container
-    const chatScreen = document.getElementById('chat-screen')
-    if (chatScreen) {
-      // Small delay to ensure DOM is updated before scrolling
-      setTimeout(() => {
-        chatScreen.scrollTo({
-          top: chatScreen.scrollHeight,
-          behavior: 'smooth'
-        })
-      }, 100)
+    // Simple scroll to bottom when messages change
+    const scrollToBottom = () => {
+      const chatScreen = document.getElementById('chat-screen')
+      if (chatScreen) {
+        setTimeout(() => {
+          const scrollHeight = chatScreen.scrollHeight
+          const clientHeight = chatScreen.clientHeight
+          const maxScrollTop = scrollHeight - clientHeight
+          
+          chatScreen.scrollTo({
+            top: maxScrollTop,
+            behavior: 'smooth'
+          })
+        }, 100)
+      }
     }
+
+    scrollToBottom()
   }, [messages])
 
   // Close menu when clicking outside
