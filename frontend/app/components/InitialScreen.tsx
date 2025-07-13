@@ -1,19 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getSessionList } from '../lib/sessionManager'
-
-interface InitialScreenProps {
-  isVisible: boolean
-  onPromptClick: (text: string) => void
-  onContinueChat?: () => void
-  onStartNewChat?: () => void
-  onViewHistory?: () => void
-  showHistoryModal?: boolean
-  onCloseHistoryModal?: () => void
-  hasExistingChat?: boolean
-  isReturnHomeMode?: boolean
-  onLoadSession?: (sessionId: string) => void
-  onDeleteSession?: (sessionId: string) => void
-}
+import { useAppContext } from '../contexts'
 
 const promptSuggestions = [
   {
@@ -34,19 +21,24 @@ const promptSuggestions = [
   }
 ]
 
-export default function InitialScreen({ 
-  isVisible, 
-  onPromptClick, 
-  onContinueChat, 
-  onStartNewChat,
-  onViewHistory,
-  showHistoryModal,
-  onCloseHistoryModal,
-  hasExistingChat, 
-  isReturnHomeMode,
-  onLoadSession,
-  onDeleteSession 
-}: InitialScreenProps) {
+export default function InitialScreen() {
+  // Get all needed data from context
+  const {
+    isChatMode,
+    showHistoryModal,
+    hasExistingChat,
+    isReturnHomeMode,
+    handleSuggestionClick,
+    resumeCurrentSession,
+    startNewChat,
+    viewChatHistory,
+    closeHistoryModal,
+    loadSession,
+    handleDeleteSession,
+  } = useAppContext()
+  
+  // Component is only visible when not in chat mode
+  const isVisible = !isChatMode
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [sessionList, setSessionList] = useState<Array<{
     id: string
@@ -62,7 +54,6 @@ export default function InitialScreen({
         const sessions = getSessionList() || []
         setSessionList(sessions)
       } catch (error) {
-        console.error('Error loading sessions:', error)
         setSessionList([])
       }
     }
@@ -71,7 +62,7 @@ export default function InitialScreen({
   if (!isVisible) return null
 
   const handlePromptClick = (text: string) => {
-    onPromptClick(text)
+    handleSuggestionClick(text)
     setIsModalOpen(false) // Close modal after selection
   }
 
@@ -150,7 +141,7 @@ export default function InitialScreen({
         <section className="return-home-actions">
           <button 
             className="action-btn primary-action"
-            onClick={onStartNewChat}
+            onClick={startNewChat}
           >
             <i className="fa-solid fa-plus"></i>
             <span>شروع گفتگوی جدید</span>
@@ -160,7 +151,7 @@ export default function InitialScreen({
           {hasExistingChat && (
             <button 
               className="action-btn secondary-action"
-              onClick={onContinueChat}
+              onClick={resumeCurrentSession}
             >
               <i className="fa-solid fa-comments"></i>
               <span>ادامه گفتگوی قبلی</span>
@@ -170,7 +161,7 @@ export default function InitialScreen({
           
           <button 
             className="action-btn tertiary-action"
-            onClick={onViewHistory}
+            onClick={viewChatHistory}
           >
             <i className="fa-solid fa-history"></i>
             <span>مشاهده تاریخچه گفتگوها</span>
@@ -181,7 +172,7 @@ export default function InitialScreen({
 
       {/* History Modal */}
       {showHistoryModal && (
-        <div className="history-modal-overlay" onClick={onCloseHistoryModal}>
+        <div className="history-modal-overlay" onClick={closeHistoryModal}>
           <div className="history-modal" onClick={(e) => e.stopPropagation()}>
             <div className="history-modal-header">
               <h3>تاریخچه گفتگوها</h3>
@@ -203,8 +194,8 @@ export default function InitialScreen({
                   {sessionList && sessionList.map((session) => (
                     <div key={session.id} className="history-session-item">
                       <div className="session-info" onClick={() => {
-                        onLoadSession?.(session.id)
-                        onCloseHistoryModal?.()
+                        loadSession(session.id)
+                        closeHistoryModal()
                       }}>
                         <div className="session-title">
                           <i className="fa-solid fa-comment-dots"></i>
@@ -223,7 +214,7 @@ export default function InitialScreen({
                         className="delete-session-btn"
                         onClick={(e) => {
                           e.stopPropagation()
-                          onDeleteSession?.(session.id)
+                          handleDeleteSession(session.id)
                           // Refresh the session list
                           const updatedSessions = getSessionList()
                           setSessionList(updatedSessions)

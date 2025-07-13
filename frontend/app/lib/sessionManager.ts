@@ -83,7 +83,6 @@ export const loadSessions = (): ChatSession[] => {
       }))
     }))
   } catch (error) {
-    console.error('Error loading sessions:', error)
     return []
   }
 }
@@ -98,7 +97,6 @@ export const saveSessions = (sessions: ChatSession[]): void => {
     
     localStorage.setItem(SESSIONS_KEY, JSON.stringify(limitedSessions))
   } catch (error) {
-    console.error('Error saving sessions:', error)
   }
 }
 
@@ -107,7 +105,6 @@ export const getActiveSessionId = (): string | null => {
   try {
     return localStorage.getItem(ACTIVE_SESSION_KEY)
   } catch (error) {
-    console.error('Error getting active session:', error)
     return null
   }
 }
@@ -117,7 +114,6 @@ export const setActiveSessionId = (sessionId: string): void => {
   try {
     localStorage.setItem(ACTIVE_SESSION_KEY, sessionId)
   } catch (error) {
-    console.error('Error setting active session:', error)
   }
 }
 
@@ -139,33 +135,22 @@ export const createNewSession = (messages: Message[] = []): ChatSession => {
 
 // Save current session
 export const saveCurrentSession = (messages: Message[], sessionId?: string): string => {
-  console.log('=== saveCurrentSession called ===')
-  console.log('Input sessionId:', sessionId)
-  console.log('Input messages:', messages.length)
-  
   const sessions = loadSessions()
-  console.log('Existing sessions:', sessions.length)
-  
   const now = new Date()
   
   // Filter out loading messages
   const cleanMessages = messages.filter(msg => !msg.isLoading)
-  console.log('Clean messages after filtering:', cleanMessages.length)
   
   if (cleanMessages.length === 0) {
-    console.log('No clean messages to save, returning early')
     return sessionId || ''
   }
   
   if (sessionId) {
-    console.log('Updating existing session:', sessionId)
     // Update existing session
     const sessionIndex = sessions.findIndex(s => s.id === sessionId)
-    console.log('Session index found:', sessionIndex)
     
     if (sessionIndex >= 0) {
       const title = generateSessionTitle(cleanMessages)
-      console.log('Generated title:', title)
       
       sessions[sessionIndex] = {
         ...sessions[sessionIndex],
@@ -173,28 +158,22 @@ export const saveCurrentSession = (messages: Message[], sessionId?: string): str
         lastModified: now.toISOString(),
         messages: cleanMessages
       }
-      console.log('Updated session:', sessions[sessionIndex])
     } else {
-      console.log('Session not found, creating new one')
       // Create new session if not found
       const newSession = createNewSession(cleanMessages)
       sessions.push(newSession)
       sessionId = newSession.id
     }
   } else {
-    console.log('Creating new session')
     // Create new session
     const newSession = createNewSession(cleanMessages)
     sessions.push(newSession)
     sessionId = newSession.id
   }
   
-  console.log('Final sessions array:', sessions.length)
-  console.log('Saving sessions...')
   saveSessions(sessions)
   setActiveSessionId(sessionId)
   
-  console.log('Session save complete, returning ID:', sessionId)
   return sessionId
 }
 

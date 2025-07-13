@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Message } from '../page'
 import { getSessionList } from '../lib/sessionManager'
+import { useAppContext } from '../contexts'
 
 // Function to format message text with basic Markdown support
 function formatMessageText(text: string): string {
@@ -23,17 +24,20 @@ function formatMessageText(text: string): string {
     .replace(/&lt;br&gt;/g, '<br>')
 }
 
-interface ChatScreenProps {
-  isVisible: boolean
-  messages: Message[]
-  onClearHistory: () => void
-  onReturnHome: () => void
-  onStartNewChat: () => void
-  onLoadSession: (sessionId: string) => void
-  onDeleteSession: (sessionId: string) => void
-}
-
-export default function ChatScreen({ isVisible, messages, onClearHistory, onReturnHome, onStartNewChat, onLoadSession, onDeleteSession }: ChatScreenProps) {
+export default function ChatScreen() {
+  // Get all needed data from context
+  const {
+    isChatMode,
+    messages,
+    clearConversationHistory,
+    handleReturnHome,
+    startNewChat,
+    loadSession,
+    handleDeleteSession,
+  } = useAppContext()
+  
+  // Component is only visible when in chat mode
+  const isVisible = isChatMode
   const chatHistoryRef = useRef<HTMLDivElement>(null)
   const [showHistoryMenu, setShowHistoryMenu] = useState(false)
   const [sessionList, setSessionList] = useState<Array<{
@@ -46,10 +50,7 @@ export default function ChatScreen({ isVisible, messages, onClearHistory, onRetu
   // Load session list when history menu opens
   useEffect(() => {
     if (showHistoryMenu) {
-      console.log('=== LOADING HISTORY ===')
       const sessions = getSessionList()
-      console.log('Sessions found:', sessions.length)
-      console.log('Session details:', sessions)
       setSessionList(sessions)
     }
   }, [showHistoryMenu])
@@ -85,33 +86,33 @@ export default function ChatScreen({ isVisible, messages, onClearHistory, onRetu
     }
   }, [showHistoryMenu])
 
-  const handleClearHistory = () => {
+  const handleClearHistoryLocal = () => {
     if (confirm('آیا مطمئن هستید که می‌خواهید تمام تاریخچه گفتگو را پاک کنید؟')) {
-      onClearHistory()
+      clearConversationHistory()
     }
   }
 
-  const handleReturnHome = () => {
-    onReturnHome()
+  const handleReturnHomeLocal = () => {
+    handleReturnHome()
   }
 
-  const handleStartNewChat = () => {
-    onStartNewChat()
+  const handleStartNewChatLocal = () => {
+    startNewChat()
   }
 
   const handleHistoryMenuToggle = () => {
     setShowHistoryMenu(!showHistoryMenu)
   }
 
-  const handleLoadSession = (sessionId: string) => {
+  const handleLoadSessionLocal = (sessionId: string) => {
     setShowHistoryMenu(false)
-    onLoadSession(sessionId)
+    loadSession(sessionId)
   }
 
-  const handleDeleteSession = (sessionId: string, event: React.MouseEvent) => {
+  const handleDeleteSessionLocal = (sessionId: string, event: React.MouseEvent) => {
     event.stopPropagation() // Prevent session loading when clicking delete
     if (confirm('آیا مطمئن هستید که می‌خواهید این گفتگو را حذف کنید؟')) {
-      onDeleteSession(sessionId)
+      handleDeleteSession(sessionId)
       // Refresh session list
       setSessionList(getSessionList())
     }
@@ -119,7 +120,7 @@ export default function ChatScreen({ isVisible, messages, onClearHistory, onRetu
 
   const handleClearFromMenu = () => {
     setShowHistoryMenu(false)
-    handleClearHistory()
+    handleClearHistoryLocal()
   }
 
   if (!isVisible) return null
@@ -131,7 +132,7 @@ export default function ChatScreen({ isVisible, messages, onClearHistory, onRetu
         <div className="triple-buttons">
           <button 
             className="triple-btn left-btn question-card-style" 
-            onClick={handleStartNewChat}
+            onClick={handleStartNewChatLocal}
           >
             <i className="fa-solid fa-plus"></i>
             <span>گفتگوی جدید</span>
@@ -159,7 +160,7 @@ export default function ChatScreen({ isVisible, messages, onClearHistory, onRetu
                       <div 
                         key={session.id}
                         className="history-session-item"
-                        onClick={() => handleLoadSession(session.id)}
+                        onClick={() => handleLoadSessionLocal(session.id)}
                       >
                         <div className="session-info">
                           <div className="session-title">{session.title}</div>
@@ -170,7 +171,7 @@ export default function ChatScreen({ isVisible, messages, onClearHistory, onRetu
                         </div>
                         <button 
                           className="session-delete-btn"
-                          onClick={(e) => handleDeleteSession(session.id, e)}
+                          onClick={(e) => handleDeleteSessionLocal(session.id, e)}
                           title="حذف گفتگو"
                         >
                           <i className="fa-solid fa-trash"></i>
@@ -189,7 +190,7 @@ export default function ChatScreen({ isVisible, messages, onClearHistory, onRetu
           </div>
           <button 
             className="triple-btn right-btn question-card-style" 
-            onClick={handleReturnHome}
+            onClick={handleReturnHomeLocal}
           >
             <i className="fa-solid fa-home"></i>
             <span>خانه</span>
@@ -210,7 +211,7 @@ export default function ChatScreen({ isVisible, messages, onClearHistory, onRetu
             }`}
           >
             {message.isLoading && (
-              <div className="typing-indicator">
+              <div className="thinking-indicator">
                 <span></span>
                 <span></span>
                 <span></span>

@@ -1,13 +1,15 @@
 import { useState, KeyboardEvent } from 'react'
+import { useAppContext } from '../contexts'
 
-interface ChatFormProps {
-  onSendMessage: (text: string) => void
-  onContinueChat?: () => void
-  hasExistingChat?: boolean
-  isChatMode?: boolean
-}
-
-export default function ChatForm({ onSendMessage, onContinueChat, hasExistingChat, isChatMode }: ChatFormProps) {
+export default function ChatForm() {
+  // Get all needed data from context
+  const {
+    isChatMode,
+    hasExistingChat,
+    isReturnHomeMode,
+    handleSendMessage,
+    continueChat,
+  } = useAppContext()
   const [inputValue, setInputValue] = useState('')
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -26,7 +28,7 @@ export default function ChatForm({ onSendMessage, onContinueChat, hasExistingCha
   const sendMessage = () => {
     const trimmedMessage = inputValue.trim()
     if (trimmedMessage) {
-      onSendMessage(trimmedMessage)
+      handleSendMessage(trimmedMessage)
       setInputValue('')
       setIsExpanded(false) // Collapse after sending
     }
@@ -43,8 +45,13 @@ export default function ChatForm({ onSendMessage, onContinueChat, hasExistingCha
     }
   }
 
+  // In return home mode, don't show any input form
+  if (isReturnHomeMode) {
+    return null
+  }
+
   // Show continue chat button if on initial screen and has existing chat
-  const showContinueButton = !isChatMode && hasExistingChat && onContinueChat
+  const showContinueButton = !isChatMode && hasExistingChat
 
   if (showContinueButton) {
     return (
@@ -52,7 +59,7 @@ export default function ChatForm({ onSendMessage, onContinueChat, hasExistingCha
         <div className="continue-chat-input-area">
           <button 
             className="continue-chat-input-btn question-card-style"
-            onClick={onContinueChat}
+            onClick={continueChat}
           >
             <i className="fa-solid fa-comments"></i>
             <span>ادامه گفتگوی قبلی</span>
