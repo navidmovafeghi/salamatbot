@@ -68,6 +68,16 @@ export default function InitialScreen() {
 
   return (
     <div id="initial-screen">
+      {/* History Button - Top Right */}
+      <button 
+        className="history-btn-top-right"
+        onClick={viewChatHistory}
+        title="تاریخچه گفتگوها"
+      >
+        <i className="fa-solid fa-history"></i>
+        <span>تاریخچه</span>
+      </button>
+
       {/* Main Heading */}
       <header className="main-header">
         <h1>سلام، <br />چه کمکی از من <span className="gradient-text">ساخته است؟</span></h1>
@@ -135,6 +145,17 @@ export default function InitialScreen() {
 
       {/* Divider */}
       <hr className="divider" />
+
+      {/* History Button - Mobile Only (under disclaimer) */}
+      <button 
+        className="history-btn-mobile"
+        onClick={viewChatHistory}
+        title="تاریخچه گفتگوها"
+      >
+        <i className="fa-solid fa-history"></i>
+        <span>مشاهده تاریخچه گفتگوها</span>
+        <i className="fa-solid fa-arrow-left"></i>
+      </button>
 
       {/* Return Home Mode - Three Action Buttons */}
       {isReturnHomeMode && (
