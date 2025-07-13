@@ -178,7 +178,7 @@ export default function InitialScreen() {
               <h3>تاریخچه گفتگوها</h3>
               <button 
                 className="history-modal-close-btn"
-                onClick={onCloseHistoryModal}
+                onClick={closeHistoryModal}
               >
                 <i className="fa-solid fa-times"></i>
               </button>
