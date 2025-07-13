@@ -249,30 +249,25 @@ body.chat-mode {
 
 /* --- Chat Textarea Expand/Collapse Styles --- */
 .chat-textarea {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     resize: none;
     overflow-y: hidden;
-}
-
-.chat-textarea.collapsed {
-    min-height: 50px;
-    max-height: 50px;
-}
-
-.chat-textarea.expanded {
-    min-height: 100px;
-    max-height: 150px;
-    overflow-y: auto;
-}
-
-.chat-textarea.chat-mode.collapsed {
-    min-height: 45px;
-    max-height: 45px;
-}
-
-.chat-textarea.chat-mode.expanded {
-    min-height: 90px;
+    min-height: 24px;
     max-height: 120px;
+}
+
+.chat-textarea.auto-resize {
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.chat-textarea.auto-resize::-webkit-scrollbar {
+    display: none;
+}
+
+.chat-textarea:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 body.chat-mode {
@@ -379,6 +374,14 @@ body.chat-mode {
     transform: translateY(-2px);
 }
 
+.chat-input-area.has-content {
+    border-color: var(--border-focus);
+}
+
+.chat-input-area.loading {
+    pointer-events: none;
+}
+
 .chat-input-area textarea {
     flex: 1;
     border: none;
@@ -402,14 +405,8 @@ body.chat-mode {
     gap: 0.8rem;
 }
 
-#char-counter {
-    font-size: 0.75rem;
-    color: var(--subtle-text-color);
-}
 
 .submit-button {
-    background: linear-gradient(135deg, var(--neutral-start), var(--neutral-end));
-    color: var(--button-text);
     border: none;
     border-radius: 50%;
     width: 40px;
@@ -419,36 +416,47 @@ body.chat-mode {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: var(--shadow-sm);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     flex-shrink: 0;
 }
 
-.submit-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+.submit-button.disabled {
+    background: var(--border-color);
+    color: var(--subtle-text-color);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.submit-button.active {
     background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.submit-button:hover {
-    transform: scale(1.05);
+    color: var(--button-text);
     box-shadow: var(--shadow-md);
+    cursor: pointer;
 }
 
-.submit-button:hover::before {
-    opacity: 1;
+.submit-button.active:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-lg);
 }
 
-.submit-button:active {
+.submit-button.active:active {
     transform: scale(0.95);
+}
+
+.submit-button:disabled {
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .submit-button i {

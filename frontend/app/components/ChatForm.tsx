@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent } from 'react'
+import { useState, KeyboardEvent, useRef, useEffect } from 'react'
 import { useAppContext } from '../contexts'
 
 export default function ChatForm() {
@@ -7,11 +7,27 @@ export default function ChatForm() {
     isChatMode,
     hasExistingChat,
     isReturnHomeMode,
+    isLoading,
     handleSendMessage,
     continueChat,
   } = useAppContext()
   const [inputValue, setInputValue] = useState('')
-  const [isExpanded, setIsExpanded] = useState(false)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // Auto-resize textarea
+  const adjustTextareaHeight = () => {
+    const textarea = textareaRef.current
+    if (textarea) {
+      textarea.style.height = 'auto'
+      const scrollHeight = textarea.scrollHeight
+      const maxHeight = 120 // Max height in pixels
+      textarea.style.height = `${Math.min(scrollHeight, maxHeight)}px`
+    }
+  }
+
+  useEffect(() => {
+    adjustTextareaHeight()
+  }, [inputValue])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,25 +41,23 @@ export default function ChatForm() {
     }
   }
 
-  const sendMessage = () => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(e.target.value)
+  }
+
+  const sendMessage = async () => {
     const trimmedMessage = inputValue.trim()
-    if (trimmedMessage) {
-      handleSendMessage(trimmedMessage)
+    if (trimmedMessage && !isLoading) {
       setInputValue('')
-      setIsExpanded(false) // Collapse after sending
+      await handleSendMessage(trimmedMessage)
     }
   }
 
-  const handleFocus = () => {
-    setIsExpanded(true)
-  }
-
-  const handleBlur = () => {
-    // Only collapse if input is empty
-    if (!inputValue.trim()) {
-      setIsExpanded(false)
-    }
-  }
+  // Check if we can send (has text and not loading)
+  const canSend = inputValue.trim().length > 0 && !isLoading
+  const charCount = inputValue.length
+  const maxChars = 1000
+  const isNearLimit = charCount > maxChars * 0.8
 
   // In return home mode, don't show any input form
   if (isReturnHomeMode) {
@@ -72,22 +86,33 @@ export default function ChatForm() {
 
   return (
     <form className="chat-form" onSubmit={handleSubmit}>
-      <div className="chat-input-area">
+      <div className={`chat-input-area ${canSend ? 'has-content' : ''} ${isLoading ? 'loading' : ''}`}>
         <textarea
+          ref={textareaRef}
           placeholder="سوال پزشکی خود را اینجا بپرسید..."
-          maxLength={1000}
+          maxLength={maxChars}
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          className={`chat-textarea ${isExpanded ? 'expanded' : 'collapsed'} ${isChatMode ? 'chat-mode' : ''}`}
-          rows={isExpanded ? 4 : 1}
+          disabled={isLoading}
+          className={`chat-textarea auto-resize ${isChatMode ? 'chat-mode' : ''}`}
+          rows={1}
         />
         
+        
         <div className="submit-area">
-          <button type="submit" className="submit-button">
-            <i className="fa-solid fa-arrow-left"></i>
+          <button 
+            type="submit" 
+            className={`submit-button ${canSend ? 'active' : 'disabled'}`}
+            disabled={!canSend}
+          >
+            {isLoading ? (
+              <div className="loading-spinner">
+                <i className="fa-solid fa-circle-notch fa-spin"></i>
+              </div>
+            ) : (
+              <i className="fa-solid fa-arrow-left"></i>
+            )}
           </button>
         </div>
       </div>
