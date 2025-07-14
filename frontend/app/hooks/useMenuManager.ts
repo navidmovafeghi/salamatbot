@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 
-export type MenuType = 'history' | 'main' | null
+export type MenuType = 'history' | 'main' | 'suggestions' | null
 export type ComponentType = 'initial' | 'chat' | null
 
 /**
@@ -58,16 +58,26 @@ export const useMenuManager = () => {
                            !target.closest('.dropdown-menu') && 
                            !target.closest('.modal-overlay') &&
                            !target.closest('.history-modal') &&
-                           !target.closest('.menu-trigger')
+                           !target.closest('.menu-trigger') &&
+                           !target.closest('.suggestions-menu') &&
+                           !target.closest('.suggestions-backdrop') &&
+                           !target.closest('.mobile-suggestions-btn')
 
       if (isOutsideMenu) {
         closeAllMenus()
       }
     }
 
-    if (activeMenu) {
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => document.removeEventListener('mousedown', handleClickOutside)
+    // Add a small delay to prevent immediate closing when opening
+    const timeoutId = setTimeout(() => {
+      if (activeMenu) {
+        document.addEventListener('mousedown', handleClickOutside)
+      }
+    }, 100)
+
+    return () => {
+      clearTimeout(timeoutId)
+      document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [activeMenu, closeAllMenus])
 
@@ -84,6 +94,7 @@ export const useMenuManager = () => {
     activeComponent,
     isHistoryMenuOpen: activeMenu === 'history',
     isMainMenuOpen: activeMenu === 'main',
+    isSuggestionsMenuOpen: activeMenu === 'suggestions',
     
     // Actions
     openMenu,
@@ -94,7 +105,9 @@ export const useMenuManager = () => {
     // Convenience methods
     openHistoryMenu: (component: ComponentType) => openMenu('history', component),
     openMainMenu: (component: ComponentType) => openMenu('main', component),
+    openSuggestionsMenu: (component: ComponentType) => openMenu('suggestions', component),
     toggleHistoryMenu: (component: ComponentType) => toggleMenu('history', component),
     toggleMainMenu: (component: ComponentType) => toggleMenu('main', component),
+    toggleSuggestionsMenu: (component: ComponentType) => toggleMenu('suggestions', component),
   }
 }

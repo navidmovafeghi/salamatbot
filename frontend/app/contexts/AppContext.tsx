@@ -26,6 +26,7 @@ interface AppContextType {
   activeComponent: ComponentType
   isHistoryMenuOpen: boolean
   isMainMenuOpen: boolean
+  isSuggestionsMenuOpen: boolean
   
   // Toast state
   toasts: Toast[]
@@ -63,8 +64,10 @@ interface AppContextType {
   toggleMenu: (menuType: MenuType, component: ComponentType) => void
   openHistoryMenu: (component: ComponentType) => void
   openMainMenu: (component: ComponentType) => void
+  openSuggestionsMenu: (component: ComponentType) => void
   toggleHistoryMenu: (component: ComponentType) => void
   toggleMainMenu: (component: ComponentType) => void
+  toggleSuggestionsMenu: (component: ComponentType) => void
   handleComponentChange: (component: ComponentType) => void
   
   // Utilities

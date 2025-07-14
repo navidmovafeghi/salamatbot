@@ -31,7 +31,9 @@ export default function InitialScreen() {
     resumeCurrentSession,
     startNewChat,
     isHistoryMenuOpen,
+    isSuggestionsMenuOpen,
     toggleHistoryMenu,
+    toggleSuggestionsMenu,
     closeAllMenus,
     handleComponentChange,
   } = useAppContext()
@@ -57,6 +59,12 @@ export default function InitialScreen() {
     closeAllMenus() // Close any open menus
   }
 
+  const handleSuggestionsMenuClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    toggleSuggestionsMenu('initial')
+  }
+
   return (
     <div id="initial-screen">
       {/* History Button - Top Right */}
@@ -77,8 +85,8 @@ export default function InitialScreen() {
         <p>دستیار هوشمند شما برای سوالات بهداشتی و پزشکی</p>
       </header>
 
-      {/* Prompt Suggestions */}
-      <div className="prompt-suggestions">
+      {/* Desktop Prompt Suggestions */}
+      <div className="prompt-suggestions desktop-suggestions">
         {promptSuggestions.map((suggestion, index) => (
           <div 
             key={index}
@@ -90,6 +98,54 @@ export default function InitialScreen() {
           </div>
         ))}
       </div>
+
+      {/* Mobile Suggestions Button */}
+      <div className="mobile-suggestions-container">
+        <button 
+          className="mobile-suggestions-btn menu-trigger"
+          onClick={handleSuggestionsMenuClick}
+          type="button"
+        >
+          <i className="fa-solid fa-lightbulb"></i>
+          <span>پیشنهادات سوال</span>
+          <i className="fa-solid fa-chevron-down"></i>
+        </button>
+      </div>
+
+      {/* Suggestions Menu - Responsive */}
+      {isSuggestionsMenuOpen && (
+        <>
+          <div 
+            className={`suggestions-backdrop ${isSuggestionsMenuOpen ? 'open' : ''}`}
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              closeAllMenus()
+            }}
+          />
+          <div className={`suggestions-menu ${isSuggestionsMenuOpen ? 'open' : ''}`}>
+            <div className="suggestions-handle"></div>
+            <div className="suggestions-header">
+              <h3>پیشنهادات سوال</h3>
+            </div>
+            {promptSuggestions.map((suggestion, index) => (
+              <button 
+                key={index}
+                className="suggestion-item"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  handlePromptClick(suggestion.text)
+                }}
+                type="button"
+              >
+                <i className={suggestion.icon}></i>
+                <span>{suggestion.text}</span>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* History Button - Mobile Only (under disclaimer) */}
       <button 
