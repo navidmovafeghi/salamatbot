@@ -11,16 +11,16 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
   useEffect(() => {
     const timer1 = setTimeout(() => {
       setAnimationPhase('visible')
-    }, 200) // Quick fade in
+    }, 300) // Slightly longer fade in for professional feel
 
     const timer2 = setTimeout(() => {
       setAnimationPhase('fadeOut')
-    }, 2000) // Show for 1.8 seconds
+    }, 3000) // Extended display time for medical context
 
     const timer3 = setTimeout(() => {
       setIsVisible(false)
       onComplete()
-    }, 2500) // Fade out duration
+    }, 3500) // Fade out duration
 
     return () => {
       clearTimeout(timer1)
@@ -32,17 +32,21 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
   if (!isVisible) return null
 
   return (
-    <div className={`splash-screen ${animationPhase}`}>
+    <div className={`splash-screen medical-splash ${animationPhase}`}>
       <div className="splash-content">
         <div className="splash-logo">
-          <div className="logo-icon">
+          <div className="logo-icon medical-logo">
             <i className="fa-solid fa-stethoscope"></i>
           </div>
         </div>
         
         <div className="splash-text">
-          <h1>دستیار پزشکی</h1>
-          <p>مشاوره هوشمند سلامت</p>
+          <h1>مرکز مشاوره پزشکی هوشمند</h1>
+          <p>دستیار تخصصی سلامت و بهداشت</p>
+          <div className="medical-badge">
+            <i className="fa-solid fa-shield-halved"></i>
+            <span>مشاوره ایمن و محرمانه</span>
+          </div>
         </div>
       </div>
     </div>

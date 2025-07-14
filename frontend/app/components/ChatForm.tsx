@@ -10,6 +10,7 @@ export default function ChatForm() {
     isLoading,
     handleSendMessage,
     continueChat,
+    toggleHistoryMenu,
   } = useAppContext()
   const [inputValue, setInputValue] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)

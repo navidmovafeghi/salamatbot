@@ -116,6 +116,50 @@ body.chat-mode {
     transition: transform 0.1s ease;
 }
 
+/* History Button Container - Between ChatForm and Disclaimer */
+.history-button-container {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0;
+    padding: 0 1rem;
+}
+
+.history-btn-centered {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--subtle-text-color);
+    font-size: 0.85rem;
+    font-weight: 400;
+    font-family: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.history-btn-centered i {
+    font-size: 1rem;
+}
+
+.history-btn-centered span {
+    font-size: 0.9rem;
+}
+
+.history-btn-centered:hover {
+    border-color: var(--border-hover);
+    color: var(--text-color);
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.history-btn-centered:active {
+    background: rgba(255, 255, 255, 0.7);
+}
+
 /* Hide mobile history button on desktop */
 .history-btn-mobile {
     display: none;
@@ -143,6 +187,235 @@ body.chat-mode {
 .main-header p {
     color: var(--subtle-text-color);
     font-size: 0.9rem;
+}
+
+/* --- Medical Header Enhancements --- */
+.medical-header {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+/* Two Column Header Layout */
+.header-two-column {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.header-right-column {
+    flex: 1;
+    text-align: right;
+}
+
+.header-left-column {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: flex-start;
+}
+
+.header-left-column .trust-indicators-text {
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 0;
+}
+
+.header-left-column .trust-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border-color);
+    opacity: 0.6;
+    margin: 0.2rem 0;
+    flex: 0 0 auto;
+}
+
+/* Trust Indicator Buttons */
+.trust-indicator-btn {
+    background: none;
+    border: none;
+    color: var(--subtle-text-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.trust-indicator-btn:hover {
+    color: var(--gradient-start);
+    background: rgba(190, 62, 149, 0.1);
+}
+
+/* Trust Popup Styles */
+.trust-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.trust-popup {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    max-width: 500px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.trust-popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.trust-popup-header h3 {
+    margin: 0;
+    color: var(--gradient-start);
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.trust-popup-close {
+    background: none;
+    border: none;
+    color: var(--subtle-text-color);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.trust-popup-close:hover {
+    color: var(--text-color);
+    background: var(--border-color);
+}
+
+.trust-popup-content {
+    padding: 1.5rem;
+}
+
+.trust-popup-content p {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.medical-title-section {
+    margin-bottom: 1rem;
+}
+
+.medical-title-section h1 {
+    margin-top: 0;
+}
+
+.medical-subtitle {
+    font-size: 1rem !important;
+    color: var(--text-color) !important;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+.trust-indicators-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 0.5rem 0;
+    flex-wrap: wrap;
+}
+
+.trust-indicators-text span {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--subtle-text-color);
+    white-space: nowrap;
+}
+
+.trust-divider {
+    color: var(--border-color);
+    font-weight: 300;
+    font-size: 1rem;
+    opacity: 0.6;
+}
+
+.medical-disclaimer-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: var(--medical-bg-light);
+    border: 1px solid var(--medical-border);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    text-align: right;
+    direction: rtl;
+}
+
+.disclaimer-icon {
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+}
+
+.disclaimer-icon i {
+    color: var(--medical-primary);
+    font-size: 1.1rem;
+}
+
+.disclaimer-text {
+    flex: 1;
+}
+
+.disclaimer-text p {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-color);
+}
+
+.disclaimer-text strong {
+    color: var(--medical-primary);
+    font-weight: 600;
+}
+
+.medical-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+    opacity: 0.7;
+}
+
+.divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+}
+
+.divider-text {
+    white-space: nowrap;
+}
+
+.divider-text span {
+    color: var(--medical-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
 /* --- Prompt Suggestions --- */
@@ -765,6 +1038,16 @@ body.chat-mode {
     to { transform: translateY(0); }
 }
 
+/* --- Medical Professional Variables --- */
+:root {
+    --medical-primary: #2563eb;
+    --medical-secondary: #059669;
+    --medical-accent: #dc2626;
+    --medical-trust: #0891b2;
+    --medical-bg-light: rgba(37, 99, 235, 0.05);
+    --medical-border: rgba(37, 99, 235, 0.15);
+}
+
 /* --- Splash Screen --- */
 .splash-screen {
     position: fixed;
@@ -778,6 +1061,10 @@ body.chat-mode {
     align-items: center;
     justify-content: center;
     opacity: 0;
+}
+
+.splash-screen.medical-splash {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 25%, #e0f2fe 50%, #f0f9ff 75%, #f8fafc 100%);
 }
 
 .splash-screen.fadeIn {
@@ -814,6 +1101,11 @@ body.chat-mode {
     box-shadow: 0 8px 32px rgba(109, 99, 210, 0.2);
 }
 
+.logo-icon.medical-logo {
+    background: linear-gradient(135deg, var(--medical-primary), var(--medical-trust));
+    box-shadow: 0 8px 32px rgba(37, 99, 235, 0.25);
+}
+
 .logo-icon i {
     font-size: 2.2rem;
     color: white;
@@ -833,6 +1125,26 @@ body.chat-mode {
     color: var(--subtle-text-color);
     font-weight: 400;
     animation: textFadeIn 0.6s ease-out 0.4s both;
+}
+
+.medical-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: var(--medical-bg-light);
+    border: 1px solid var(--medical-border);
+    border-radius: 12px;
+    color: var(--medical-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    animation: textFadeIn 0.6s ease-out 0.6s both;
+}
+
+.medical-badge i {
+    font-size: 0.9rem;
 }
 
 @keyframes splashFadeIn {
@@ -1959,6 +2271,35 @@ body.chat-mode {
         font-size: 0.9rem;
     }
 
+    /* Medical Components Mobile Styles */
+    .medical-badge {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+        margin-top: 0.75rem;
+    }
+
+    .trust-indicators-text {
+        gap: 1rem;
+        margin: 0.75rem 0;
+    }
+
+    .trust-indicators-text span {
+        font-size: 0.85rem;
+    }
+
+    .trust-divider {
+        font-size: 0.9rem;
+    }
+
+    .medical-disclaimer-header {
+        padding: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    .disclaimer-text p {
+        font-size: 0.8rem;
+    }
+
     /* Mobile Triple Buttons for Tablet */
     .triple-buttons {
         gap: 0.2rem;
@@ -2167,6 +2508,62 @@ body.chat-mode {
         margin-top: 0.5rem;
         padding: 0.75rem 0.5rem;
         font-size: 0.7rem;
+    }
+}
+
+/* --- Mobile Header Layout --- */
+@media (max-width: 768px) {
+    .medical-header {
+        text-align: center;
+    }
+    
+    .header-two-column {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+        align-items: center;
+    }
+    
+    .header-right-column {
+        text-align: center;
+        width: 100%;
+    }
+    
+    .header-right-column .medical-title-section {
+        text-align: center;
+    }
+    
+    .header-right-column .medical-title-section h1 {
+        text-align: center;
+    }
+    
+    .header-right-column .medical-subtitle {
+        text-align: center;
+    }
+    
+    .header-left-column {
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .header-left-column .trust-indicators-text {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        width: 100%;
+    }
+    
+    .header-left-column .trust-divider {
+        width: 1px;
+        height: 20px;
+        margin: 0 0.5rem;
+    }
+    
+    .header-left-column .trust-indicator-btn {
+        text-align: center;
     }
 }
 
@@ -2421,6 +2818,39 @@ body.chat-mode {
 
 .toast-info .toast-content i {
   color: #3b82f6;
+}
+
+/* Input Footer Links */
+.input-footer-links {
+    display: flex;
+    justify-content: center;
+    padding: 0.75rem 0;
+    margin-top: 0.5rem;
+}
+
+.history-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--subtle-text-color);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.history-link:hover {
+    color: var(--medical-primary);
+    background: rgba(37, 99, 235, 0.05);
+}
+
+.history-link i {
+    font-size: 0.9rem;
 }
 
 /* Toast animations */

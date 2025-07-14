@@ -47,6 +47,21 @@ function AppContent() {
       <ChatScreen />
       <ChatForm />
       
+      {/* History Button - Between ChatForm and Disclaimer */}
+      {!isChatMode && (
+        <div className="history-button-container">
+          <button 
+            className="history-btn-centered menu-trigger"
+            onClick={() => toggleHistoryMenu('initial')}
+            title="تاریخچه گفتگوها"
+          >
+            <i className="fa-solid fa-history"></i>
+            <span>مشاهده تاریخچه گفتگوها</span>
+            <i className="fa-solid fa-arrow-left"></i>
+          </button>
+        </div>
+      )}
+      
       {/* Medical Disclaimer - Always visible */}
       {!isChatMode && (
         <div className="disclaimer">
