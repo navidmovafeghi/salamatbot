@@ -50,7 +50,7 @@ interface AppContextType {
   handleSaveSession: () => void
   handleDontSave: () => void
   handleCancelSave: () => void
-  handleManualSave: () => void
+  handleManualSave: () => Promise<boolean | void>
   
   // Toast actions
   showToast: (message: string, type?: 'success' | 'error' | 'info' | 'warning', duration?: number) => string

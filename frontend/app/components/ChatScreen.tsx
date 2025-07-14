@@ -93,13 +93,14 @@ export default function ChatScreen() {
     closeAllMenus()
     
     try {
-      const success = await handleManualSave()
+      const result = await handleManualSave()
       
-      if (success === true) {
+      if (result === true) {
         showToast('گفتگو ذخیره شد - از این پس خودکار بروزرسانی می‌شود', 'success', 3000)
-      } else {
+      } else if (result === false) {
         showToast('خطا در ذخیره گفتگو. لطفاً دوباره تلاش کنید.', 'error', 3000)
       }
+      // If result is void/undefined, we don't show any toast
     } catch (error) {
       showToast('خطا در ذخیره گفتگو. لطفاً دوباره تلاش کنید.', 'error', 3000)
     }
