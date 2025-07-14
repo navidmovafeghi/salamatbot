@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import './styles/tmp_rovodev_new-header.css'
+import './styles/tmp_rovodev_cta-section.css'
 
 export const metadata: Metadata = {
   title: 'چت‌بات پزشکی',

@@ -102,8 +102,6 @@ export default function InitialScreen() {
 
       </header>
 
-
-
       {/* History Modal */}
       <HistoryModal 
         isOpen={isHistoryMenuOpen}

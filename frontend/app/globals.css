@@ -12,8 +12,8 @@
     --focus-ring: rgba(148, 163, 184, 0.3);
     --card-bg: #ffffff;
     --card-bg-subtle: rgba(255, 255, 255, 0.8);
-    --gradient-start: #be3e95;
-    --gradient-end: #6d63d2;
+    --gradient-start: #2563eb;
+    --gradient-end: #0891b2;
     --button-bg: #6d63d2;
     --button-text: #ffffff;
     --neutral-start: #64748b;
@@ -308,7 +308,7 @@ body.chat-mode {
 }
 
 .gradient-text {
-    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    background: linear-gradient(135deg, var(--medical-primary), var(--medical-trust));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -933,7 +933,7 @@ body.chat-mode {
     display: flex;
     flex-direction: column;
     margin: 0 auto;
-    padding-bottom: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
@@ -1001,7 +1001,7 @@ body.chat-mode {
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(20px);
     border: 2px solid var(--border-color);
-    border-radius: 15px;
+    border-radius: 25px;
     padding: 0.8rem 1rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
     display: flex;
@@ -1475,28 +1475,10 @@ body.chat-mode {
         order: 4;
     }
 
-    /* Move action buttons under disclaimer on mobile */
+    /* Mobile action buttons - exactly like desktop */
     .action-buttons-container {
-        order: 5;
-        margin: 1rem 0 0 0;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    
-    .action-btn {
-        width: 100%;
-        justify-content: center;
-        padding: 0.75rem 1rem;
-        font-size: 0.9rem;
-        max-width: none;
-    }
-    
-    .action-btn span {
-        font-size: 0.95rem;
-    }
-    
-    .action-btn i {
-        font-size: 1.1rem;
+        margin: 1.5rem 0;
+        padding: 0 1rem;
     }
 
     /* Return home buttons mobile styles */
@@ -1857,7 +1839,7 @@ body.chat-mode {
     z-index: 200;
     background: rgba(248, 250, 252, 0.95);
     backdrop-filter: blur(20px);
-    padding: 1rem;
+    padding: 0;
     width: 100%;
     max-width: 100%;
     border-bottom: 1px solid rgba(226, 232, 240, 0.5);
@@ -2570,7 +2552,7 @@ body.chat-mode {
 
     .chat-input-area {
         padding: 0.5rem !important;
-        border-radius: 16px !important;
+        border-radius: 25px !important;
         min-height: 50px !important;
         flex: 1 !important;
     }
