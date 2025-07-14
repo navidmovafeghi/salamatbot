@@ -32,6 +32,7 @@ function AppContent() {
     handleCancelSave,
     toasts,
     removeToast,
+    toggleHistoryMenu,
   } = useAppContext()
 
 
