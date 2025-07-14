@@ -91,11 +91,16 @@ export default function ChatScreen() {
 
   const handleSaveSessionClick = async () => {
     closeAllMenus()
-    const success = await handleManualSave()
     
-    if (success) {
-      showToast('گفتگو ذخیره شد - از این پس خودکار بروزرسانی می‌شود', 'success', 3000)
-    } else {
+    try {
+      const success = await handleManualSave()
+      
+      if (success === true) {
+        showToast('گفتگو ذخیره شد - از این پس خودکار بروزرسانی می‌شود', 'success', 3000)
+      } else {
+        showToast('خطا در ذخیره گفتگو. لطفاً دوباره تلاش کنید.', 'error', 3000)
+      }
+    } catch (error) {
       showToast('خطا در ذخیره گفتگو. لطفاً دوباره تلاش کنید.', 'error', 3000)
     }
   }
