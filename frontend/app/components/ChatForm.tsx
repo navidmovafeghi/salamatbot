@@ -60,9 +60,33 @@ export default function ChatForm() {
   const maxChars = 1000
   const isNearLimit = charCount > maxChars * 0.8
 
-  // In return home mode, don't show any input form
+  // In return home mode, show action buttons instead of input form
   if (isReturnHomeMode) {
-    return null
+    const { startNewChat, resumeCurrentSession } = useAppContext()
+    
+    return (
+      <div className="chat-form">
+        <div className="return-home-buttons">
+          <button 
+            className="return-home-btn new-chat-btn"
+            onClick={startNewChat}
+          >
+            <i className="fa-solid fa-plus"></i>
+            <span>گفتگوی جدید</span>
+            <i className="fa-solid fa-arrow-left"></i>
+          </button>
+          
+          <button 
+            className="return-home-btn continue-btn"
+            onClick={resumeCurrentSession}
+          >
+            <i className="fa-solid fa-play"></i>
+            <span>ادامه گفتگو</span>
+            <i className="fa-solid fa-arrow-left"></i>
+          </button>
+        </div>
+      </div>
+    )
   }
 
   // Show continue chat button if on initial screen and has existing chat
