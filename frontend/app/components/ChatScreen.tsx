@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { Message } from '../page'
-import { getSessionList } from '../lib/sessionManager'
 import { useAppContext } from '../contexts'
+import HistoryModal from './HistoryModal'
 
 // Function to format message text with basic Markdown support
 function formatMessageText(text: string): string {
@@ -32,179 +32,134 @@ export default function ChatScreen() {
     clearConversationHistory,
     handleReturnHome,
     startNewChat,
-    loadSession,
-    handleDeleteSession,
+    isHistoryMenuOpen,
+    isMainMenuOpen,
+    toggleHistoryMenu,
+    toggleMainMenu,
+    closeAllMenus,
+    handleComponentChange,
+    canSaveSession,
+    saveStatus,
+    isSessionSaved,
+    handleManualSave,
+    showToast,
   } = useAppContext()
   
   // Component is only visible when in chat mode
   const isVisible = isChatMode
   const chatHistoryRef = useRef<HTMLDivElement>(null)
-  const [showHistoryMenu, setShowHistoryMenu] = useState(false)
-  const [sessionList, setSessionList] = useState<Array<{
-    id: string
-    title: string
-    date: string
-    messageCount: number
-  }>>([])
 
-  // Load session list when history menu opens
+  // Auto-scroll to bottom when new messages are added
   useEffect(() => {
-    if (showHistoryMenu) {
-      const sessions = getSessionList()
-      setSessionList(sessions)
+    if (chatHistoryRef.current) {
+      chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight
     }
-  }, [showHistoryMenu])
-
-  useEffect(() => {
-    // Simple scroll to bottom when messages change
-    const scrollToBottom = () => {
-      const chatScreen = document.getElementById('chat-screen')
-      if (chatScreen) {
-        setTimeout(() => {
-          const scrollHeight = chatScreen.scrollHeight
-          const clientHeight = chatScreen.clientHeight
-          const maxScrollTop = scrollHeight - clientHeight
-          
-          chatScreen.scrollTo({
-            top: maxScrollTop,
-            behavior: 'smooth'
-          })
-        }, 100)
-      }
-    }
-
-    scrollToBottom()
   }, [messages])
 
-  // Close menu when clicking outside
+  // Notify menu manager when this component becomes active
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (showHistoryMenu && !(event.target as Element).closest('.history-menu-container')) {
-        setShowHistoryMenu(false)
-      }
+    if (isVisible) {
+      handleComponentChange('chat')
     }
-
-    if (showHistoryMenu) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [showHistoryMenu])
-
-  const handleClearHistoryLocal = () => {
-    if (confirm('آیا مطمئن هستید که می‌خواهید تمام تاریخچه گفتگو را پاک کنید؟')) {
-      clearConversationHistory()
-    }
-  }
-
-  const handleReturnHomeLocal = () => {
-    handleReturnHome()
-  }
-
-  const handleStartNewChatLocal = () => {
-    startNewChat()
-  }
-
-  const handleHistoryMenuToggle = () => {
-    setShowHistoryMenu(!showHistoryMenu)
-  }
-
-  const handleLoadSessionLocal = (sessionId: string) => {
-    setShowHistoryMenu(false)
-    loadSession(sessionId)
-  }
-
-  const handleDeleteSessionLocal = (sessionId: string, event: React.MouseEvent) => {
-    event.stopPropagation() // Prevent session loading when clicking delete
-    if (confirm('آیا مطمئن هستید که می‌خواهید این گفتگو را حذف کنید؟')) {
-      handleDeleteSession(sessionId)
-      // Refresh session list
-      setSessionList(getSessionList())
-    }
-  }
-
-  const handleClearFromMenu = () => {
-    setShowHistoryMenu(false)
-    handleClearHistoryLocal()
-  }
+  }, [isVisible, handleComponentChange])
 
   if (!isVisible) return null
 
+  const handleMainMenuClick = () => {
+    toggleMainMenu('chat')
+  }
+
+  const handleHistoryClick = () => {
+    closeAllMenus() // Close main menu first
+    toggleHistoryMenu('chat')
+  }
+
+  const handleNewChatClick = () => {
+    closeAllMenus()
+    startNewChat()
+  }
+
+  const handleReturnHomeClick = () => {
+    closeAllMenus()
+    handleReturnHome()
+  }
+
+  const handleClearHistoryClick = () => {
+    closeAllMenus()
+    clearConversationHistory()
+  }
+
+  const handleSaveSessionClick = async () => {
+    closeAllMenus()
+    const success = await handleManualSave()
+    
+    if (success) {
+      showToast('گفتگو ذخیره شد - از این پس خودکار بروزرسانی می‌شود', 'success', 3000)
+    } else {
+      showToast('خطا در ذخیره گفتگو. لطفاً دوباره تلاش کنید.', 'error', 3000)
+    }
+  }
+
   return (
     <div id="chat-screen">
-      {/* Three buttons: Start New Chat + Clear History + Return Home */}
+      {/* Chat Header with Menu */}
       <div className="chat-header">
-        <div className="triple-buttons">
+        <div className="main-menu-container menu-container">
           <button 
-            className="triple-btn left-btn question-card-style" 
-            onClick={handleStartNewChatLocal}
+            className="main-menu-btn menu-trigger" 
+            onClick={handleMainMenuClick}
           >
-            <i className="fa-solid fa-plus"></i>
-            <span>گفتگوی جدید</span>
+            <i className="fa-solid fa-bars"></i>
+            <span>منو</span>
           </button>
-          <div className="history-menu-container">
-            <button 
-              className="triple-btn middle-btn question-card-style" 
-              onClick={handleHistoryMenuToggle}
-            >
-              <i className="fa-solid fa-history"></i>
-              <span>تاریخچه</span>
-            </button>
-            {showHistoryMenu && (
-              <div className="history-dropdown-menu">
-                {sessionList.length === 0 ? (
-                  <div className="history-empty-state">
-                    <span>هیچ گفتگوی قبلی وجود ندارد</span>
-                  </div>
-                ) : (
-                  <>
-                    <div className="history-menu-header">
-                      <span>گفتگوهای قبلی</span>
-                    </div>
-                    {sessionList.map((session) => (
-                      <div 
-                        key={session.id}
-                        className="history-session-item"
-                        onClick={() => handleLoadSessionLocal(session.id)}
-                      >
-                        <div className="session-info">
-                          <div className="session-title">{session.title}</div>
-                          <div className="session-meta">
-                            <span className="session-date">{session.date}</span>
-                            <span className="session-count">{session.messageCount} پیام</span>
-                          </div>
-                        </div>
-                        <button 
-                          className="session-delete-btn"
-                          onClick={(e) => handleDeleteSessionLocal(session.id, e)}
-                          title="حذف گفتگو"
-                        >
-                          <i className="fa-solid fa-trash"></i>
-                        </button>
-                      </div>
-                    ))}
-                    <div className="history-menu-divider"></div>
-                    <button className="history-menu-item danger" onClick={handleClearFromMenu}>
-                      <i className="fa-solid fa-trash"></i>
-                      <span>پاک کردن گفتگوی فعلی</span>
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-          <button 
-            className="triple-btn right-btn question-card-style" 
-            onClick={handleReturnHomeLocal}
-          >
-            <i className="fa-solid fa-home"></i>
-            <span>خانه</span>
-          </button>
+          
+          {isMainMenuOpen && (
+            <div className="main-dropdown-menu dropdown-menu">
+              <button className="main-menu-item" onClick={handleNewChatClick}>
+                <i className="fa-solid fa-plus"></i>
+                گفتگوی جدید
+              </button>
+              
+              <button className="main-menu-item" onClick={handleHistoryClick}>
+                <i className="fa-solid fa-history"></i>
+                تاریخچه گفتگوها
+              </button>
+              
+              {/* Save button - only show for unsaved conversations */}
+              {!isSessionSaved && (
+                <button 
+                  className={`main-menu-item ${!canSaveSession ? 'disabled' : ''}`}
+                  onClick={handleSaveSessionClick}
+                  disabled={!canSaveSession}
+                >
+                  <i className={`fa-solid ${saveStatus === 'saving' ? 'fa-spinner fa-spin' : 'fa-save'}`}></i>
+                  {saveStatus === 'saving' ? 'در حال ذخیره...' : 'ذخیره گفتگو'}
+                </button>
+              )}
+              
+              {/* Saved indicator - show for saved conversations */}
+              {isSessionSaved && (
+                <div className="main-menu-item saved-indicator">
+                  <i className="fa-solid fa-check-circle"></i>
+                  محفوظ شده (خودکار)
+                </div>
+              )}
+              
+              <button className="main-menu-item" onClick={handleClearHistoryClick}>
+                <i className="fa-solid fa-trash"></i>
+                پاک کردن گفتگو
+              </button>
+              
+              <button className="main-menu-item" onClick={handleReturnHomeClick}>
+                <i className="fa-solid fa-home"></i>
+                بازگشت به خانه
+              </button>
+            </div>
+          )}
         </div>
       </div>
-      
+
+      {/* Chat Messages */}
       <div id="chat-history" ref={chatHistoryRef}>
         {messages.map((message) => (
           <div 
@@ -238,6 +193,13 @@ export default function ChatScreen() {
           </div>
         ))}
       </div>
+
+      {/* History Modal */}
+      <HistoryModal 
+        isOpen={isHistoryMenuOpen}
+        onClose={closeAllMenus}
+        variant="modal"
+      />
     </div>
   )
 }

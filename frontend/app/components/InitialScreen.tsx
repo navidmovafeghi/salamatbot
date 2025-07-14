@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
-import { getSessionList } from '../lib/sessionManager'
+import { useEffect } from 'react'
 import { useAppContext } from '../contexts'
+import HistoryModal from './HistoryModal'
 
 const promptSuggestions = [
   {
@@ -25,68 +25,60 @@ export default function InitialScreen() {
   // Get all needed data from context
   const {
     isChatMode,
-    showHistoryModal,
     hasExistingChat,
     isReturnHomeMode,
     handleSuggestionClick,
     resumeCurrentSession,
     startNewChat,
-    viewChatHistory,
-    closeHistoryModal,
-    loadSession,
-    handleDeleteSession,
+    isHistoryMenuOpen,
+    toggleHistoryMenu,
+    closeAllMenus,
+    handleComponentChange,
   } = useAppContext()
   
   // Component is only visible when not in chat mode
   const isVisible = !isChatMode
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [sessionList, setSessionList] = useState<Array<{
-    id: string
-    title: string
-    date: string
-    messageCount: number
-  }>>([])
 
-  // Load sessions when history modal opens
+  // Notify menu manager when this component becomes active
   useEffect(() => {
-    if (showHistoryModal) {
-      try {
-        const sessions = getSessionList() || []
-        setSessionList(sessions)
-      } catch (error) {
-        setSessionList([])
-      }
+    if (isVisible) {
+      handleComponentChange('initial')
     }
-  }, [showHistoryModal])
+  }, [isVisible, handleComponentChange])
 
   if (!isVisible) return null
 
+  const handleHistoryClick = () => {
+    toggleHistoryMenu('initial')
+  }
+
   const handlePromptClick = (text: string) => {
     handleSuggestionClick(text)
-    setIsModalOpen(false) // Close modal after selection
+    closeAllMenus() // Close any open menus
   }
 
   return (
     <div id="initial-screen">
       {/* History Button - Top Right */}
       <button 
-        className="history-btn-top-right"
-        onClick={viewChatHistory}
+        className="history-btn-top-right menu-trigger"
+        onClick={handleHistoryClick}
         title="تاریخچه گفتگوها"
       >
         <i className="fa-solid fa-history"></i>
         <span>تاریخچه</span>
       </button>
 
-      {/* Main Heading */}
+      {/* Main Header */}
       <header className="main-header">
-        <h1>سلام، <br />چه کمکی از من <span className="gradient-text">ساخته است؟</span></h1>
-        <p>یکی از سوالات متداول زیر را انتخاب کنید یا سوال خود را بپرسید</p>
+        <h1>
+          <span className="gradient-text">چت‌بات پزشکی</span>
+        </h1>
+        <p>دستیار هوشمند شما برای سوالات بهداشتی و پزشکی</p>
       </header>
 
-
-      {/* Desktop Prompt Suggestions - Always visible on desktop */}
-      <section className="prompt-suggestions desktop-suggestions">
+      {/* Prompt Suggestions */}
+      <div className="prompt-suggestions">
         {promptSuggestions.map((suggestion, index) => (
           <div 
             key={index}
@@ -97,59 +89,12 @@ export default function InitialScreen() {
             <i className={suggestion.icon}></i>
           </div>
         ))}
-      </section>
-
-      {/* Mobile Quick Questions Button */}
-      <div className="mobile-suggestions-trigger">
-        <button 
-          className="quick-questions-btn"
-          onClick={() => setIsModalOpen(true)}
-        >
-          <i className="fa-solid fa-lightbulb"></i>
-          <span>سوالات متداول</span>
-          <i className="fa-solid fa-chevron-up"></i>
-        </button>
       </div>
-
-      {/* Mobile Modal/Drawer */}
-      {isModalOpen && (
-        <div className="suggestions-modal-overlay" onClick={() => setIsModalOpen(false)}>
-          <div className="suggestions-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>سوالات متداول پزشکی</h3>
-              <button 
-                className="modal-close-btn"
-                onClick={() => setIsModalOpen(false)}
-              >
-                <i className="fa-solid fa-times"></i>
-              </button>
-            </div>
-            <div className="modal-suggestions">
-              {promptSuggestions.map((suggestion, index) => (
-                <div 
-                  key={index}
-                  className="modal-prompt-card"
-                  onClick={() => handlePromptClick(suggestion.text)}
-                >
-                  <div className="modal-card-content">
-                    <i className={suggestion.icon}></i>
-                    <p>{suggestion.text}</p>
-                  </div>
-                  <i className="fa-solid fa-chevron-left"></i>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Divider */}
-      <hr className="divider" />
 
       {/* History Button - Mobile Only (under disclaimer) */}
       <button 
-        className="history-btn-mobile"
-        onClick={viewChatHistory}
+        className="history-btn-mobile menu-trigger"
+        onClick={handleHistoryClick}
         title="تاریخچه گفتگوها"
       >
         <i className="fa-solid fa-history"></i>
@@ -161,96 +106,29 @@ export default function InitialScreen() {
       {isReturnHomeMode && (
         <section className="return-home-actions">
           <button 
-            className="action-btn primary-action"
+            className="action-btn new-chat-btn"
             onClick={startNewChat}
           >
             <i className="fa-solid fa-plus"></i>
-            <span>شروع گفتگوی جدید</span>
-            <i className="fa-solid fa-arrow-left"></i>
+            <span>گفتگوی جدید</span>
           </button>
           
-          {hasExistingChat && (
-            <button 
-              className="action-btn secondary-action"
-              onClick={resumeCurrentSession}
-            >
-              <i className="fa-solid fa-comments"></i>
-              <span>ادامه گفتگوی قبلی</span>
-              <i className="fa-solid fa-arrow-left"></i>
-            </button>
-          )}
-          
           <button 
-            className="action-btn tertiary-action"
-            onClick={viewChatHistory}
+            className="action-btn continue-btn"
+            onClick={resumeCurrentSession}
           >
-            <i className="fa-solid fa-history"></i>
-            <span>مشاهده تاریخچه گفتگوها</span>
-            <i className="fa-solid fa-arrow-left"></i>
+            <i className="fa-solid fa-play"></i>
+            <span>ادامه گفتگو</span>
           </button>
         </section>
       )}
 
       {/* History Modal */}
-      {showHistoryModal && (
-        <div className="history-modal-overlay" onClick={closeHistoryModal}>
-          <div className="history-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="history-modal-header">
-              <h3>تاریخچه گفتگوها</h3>
-              <button 
-                className="history-modal-close-btn"
-                onClick={closeHistoryModal}
-              >
-                <i className="fa-solid fa-times"></i>
-              </button>
-            </div>
-            <div className="history-modal-content">
-              {!sessionList || sessionList.length === 0 ? (
-                <div className="no-history">
-                  <i className="fa-solid fa-comments"></i>
-                  <p>هنوز گفتگویی ذخیره نشده است</p>
-                </div>
-              ) : (
-                <div className="history-sessions">
-                  {sessionList && sessionList.map((session) => (
-                    <div key={session.id} className="history-session-item">
-                      <div className="session-info" onClick={() => {
-                        loadSession(session.id)
-                        closeHistoryModal()
-                      }}>
-                        <div className="session-title">
-                          <i className="fa-solid fa-comment-dots"></i>
-                          <span>{session.title}</span>
-                        </div>
-                        <div className="session-meta">
-                          <span className="session-date">
-                            {session.date || 'تاریخ نامشخص'}
-                          </span>
-                          <span className="session-messages">
-                            {session.messageCount || 0} پیام
-                          </span>
-                        </div>
-                      </div>
-                      <button 
-                        className="delete-session-btn"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleDeleteSession(session.id)
-                          // Refresh the session list
-                          const updatedSessions = getSessionList()
-                          setSessionList(updatedSessions)
-                        }}
-                      >
-                        <i className="fa-solid fa-trash"></i>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      <HistoryModal 
+        isOpen={isHistoryMenuOpen}
+        onClose={closeAllMenus}
+        variant="modal"
+      />
     </div>
   )
 }

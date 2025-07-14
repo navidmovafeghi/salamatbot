@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, ReactNode } from 'react'
 import { useMedicalChatApp } from '../hooks/useMedicalChatApp'
+import { useMenuManager, MenuType, ComponentType } from '../hooks/useMenuManager'
+import { useToast, Toast } from '../hooks/useToast'
 import { Message } from '../page'
 
 // Define the context type
@@ -19,6 +21,19 @@ interface AppContextType {
   hasExistingChat: boolean
   isReturnHomeMode: boolean
   
+  // Menu state
+  activeMenu: MenuType
+  activeComponent: ComponentType
+  isHistoryMenuOpen: boolean
+  isMainMenuOpen: boolean
+  
+  // Toast state
+  toasts: Toast[]
+  
+  // Save state
+  canSaveSession: boolean
+  saveStatus: 'idle' | 'saving' | 'saved' | 'error'
+  
   // Actions
   handleSplashComplete: () => void
   viewChatHistory: () => void
@@ -35,6 +50,22 @@ interface AppContextType {
   handleSaveSession: () => void
   handleDontSave: () => void
   handleCancelSave: () => void
+  handleManualSave: () => void
+  
+  // Toast actions
+  showToast: (message: string, type?: 'success' | 'error' | 'info' | 'warning', duration?: number) => string
+  removeToast: (id: string) => void
+  clearAllToasts: () => void
+  
+  // Menu actions
+  openMenu: (menuType: MenuType, component: ComponentType) => void
+  closeAllMenus: () => void
+  toggleMenu: (menuType: MenuType, component: ComponentType) => void
+  openHistoryMenu: (component: ComponentType) => void
+  openMainMenu: (component: ComponentType) => void
+  toggleHistoryMenu: (component: ComponentType) => void
+  toggleMainMenu: (component: ComponentType) => void
+  handleComponentChange: (component: ComponentType) => void
   
   // Utilities
   generateSessionTitle: () => string
@@ -52,9 +83,18 @@ interface AppProviderProps {
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   // Get all functionality from our main hook
   const appData = useMedicalChatApp()
+  const menuManager = useMenuManager()
+  const toastManager = useToast()
+
+  // Combine all data
+  const contextValue = {
+    ...appData,
+    ...menuManager,
+    ...toastManager,
+  }
 
   return (
-    <AppContext.Provider value={appData}>
+    <AppContext.Provider value={contextValue}>
       {children}
     </AppContext.Provider>
   )

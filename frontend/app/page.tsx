@@ -4,6 +4,7 @@ import InitialScreen from './components/InitialScreen'
 import ChatScreen from './components/ChatScreen'
 import ChatForm from './components/ChatForm'
 import SplashScreen from './components/SplashScreen'
+import ToastContainer from './components/ToastContainer'
 import { AppProvider, useAppContext } from './contexts'
 
 export interface Message {
@@ -29,6 +30,8 @@ function AppContent() {
     handleSaveSession,
     handleDontSave,
     handleCancelSave,
+    toasts,
+    removeToast,
   } = useAppContext()
 
 
@@ -90,6 +93,9 @@ function AppContent() {
           </div>
         </div>
       )}
+      
+      {/* Toast Container */}
+      <ToastContainer toasts={toasts} onRemoveToast={removeToast} />
     </main>
   )
 }

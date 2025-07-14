@@ -83,11 +83,13 @@ export const useSessionManager = () => {
   // Function to save current session
   const handleSaveSession = (messages: Message[]) => {
     try {
-      if (messages.length > 0 && currentSessionId) {
-        const savedId = saveCurrentSession(messages, currentSessionId)
+      if (messages.length > 0) {
+        const savedId = saveCurrentSession(messages, currentSessionId || undefined)
         
-        // Verify it was saved
-        const sessions = loadSessions()
+        // Update current session ID if it was a new session
+        if (savedId && !currentSessionId) {
+          setCurrentSessionId(savedId)
+        }
         
         setIsSessionSaved(true) // Mark as saved
         return savedId

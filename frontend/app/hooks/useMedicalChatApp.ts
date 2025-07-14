@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppState } from './useAppState'
 import { useSessionManager } from './useSessionManager'
 import { useChatManager } from './useChatManager'
@@ -15,6 +15,30 @@ export const useMedicalChatApp = () => {
   const sessionManager = useSessionManager()
   const chatManager = useChatManager()
   const saveDialog = useSaveDialog()
+  
+  // Save status state
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  
+  // Auto-update effect for saved sessions
+  useEffect(() => {
+    // Only auto-update if session is saved and has messages
+    if (sessionManager.isSessionSaved && 
+        sessionManager.currentSessionId && 
+        chatManager.messages.length > 0 && 
+        !chatManager.isLoading) {
+      
+      // Debounce auto-updates to avoid excessive saves
+      const timeoutId = setTimeout(() => {
+        try {
+          sessionManager.handleSaveSession(chatManager.messages)
+        } catch (error) {
+          // Silent fail for auto-updates
+        }
+      }, 500)
+      
+      return () => clearTimeout(timeoutId)
+    }
+  }, [chatManager.messages, sessionManager.isSessionSaved, sessionManager.currentSessionId, chatManager.isLoading])
 
   // Load saved conversations on component mount
   useEffect(() => {
@@ -104,7 +128,7 @@ export const useMedicalChatApp = () => {
     handleSendMessage(text)
   }
 
-  // Enhanced send message function
+  // Enhanced send message function with auto-update
   const handleSendMessage = async (text: string) => {
     // If this is the first message, transition to chat mode and create session if needed
     if (!appState.isChatMode) {
@@ -116,11 +140,40 @@ export const useMedicalChatApp = () => {
       sessionManager.createSession()
     }
 
-    // Mark session as unsaved when new messages are added
-    sessionManager.markSessionUnsaved()
+    // Mark session as unsaved when new messages are added (for new sessions)
+    if (!sessionManager.isSessionSaved) {
+      sessionManager.markSessionUnsaved()
+    }
 
     // Send the message using chat manager
     await chatManager.handleSendMessage(text)
+    
+    // Note: Auto-update is now handled by useEffect hook above
+  }
+
+  // Manual save function (for save button in menu)
+  const handleManualSave = async () => {
+    if (!chatManager.hasExistingChat || chatManager.isLoading) return
+    
+    setSaveStatus('saving')
+    
+    try {
+      const savedId = sessionManager.handleSaveSession(chatManager.messages)
+      if (savedId) {
+        setSaveStatus('saved')
+        // Reset status after showing success
+        setTimeout(() => setSaveStatus('idle'), 2000)
+        return true
+      } else {
+        setSaveStatus('error')
+        setTimeout(() => setSaveStatus('idle'), 3000)
+        return false
+      }
+    } catch (error) {
+      setSaveStatus('error')
+      setTimeout(() => setSaveStatus('idle'), 3000)
+      return false
+    }
   }
 
   // Handle save dialog - user chooses to save
@@ -158,6 +211,8 @@ export const useMedicalChatApp = () => {
 
   // Computed values
   const isReturnHomeMode = !appState.isChatMode && (chatManager.hasExistingChat || !!sessionManager.currentSessionId)
+  // Save button only available for new (unsaved) conversations
+  const canSaveSession = chatManager.hasExistingChat && !chatManager.isLoading && !sessionManager.isSessionSaved
 
   return {
     // State from all hooks
@@ -174,6 +229,8 @@ export const useMedicalChatApp = () => {
     // Computed values
     hasExistingChat: chatManager.hasExistingChat,
     isReturnHomeMode,
+    canSaveSession,
+    saveStatus,
     
     // Actions
     handleSplashComplete: appState.handleSplashComplete,
@@ -193,6 +250,7 @@ export const useMedicalChatApp = () => {
     handleSaveSession,
     handleDontSave,
     handleCancelSave: saveDialog.handleCancelSave,
+    handleManualSave,
     
     // Utility function for save dialog
     generateSessionTitle: () => chatManager.messages.length > 0 ? generateSessionTitle(chatManager.messages) : 'گفتگوی جدید',
