@@ -5,6 +5,13 @@ import { useMedicalChatApp } from '../hooks/useMedicalChatApp'
 import { useMenuManager, MenuType, ComponentType } from '../hooks/useMenuManager'
 import { useToast, Toast } from '../hooks/useToast'
 import { Message } from '../page'
+import { 
+  OptimizedProgressiveState, 
+  InputAnalysis, 
+  MedicalCategory, 
+  ConfidenceAssessment,
+  ConversationFlowState 
+} from '../types/conversation'
 
 // Define the context type
 interface AppContextType {
@@ -20,6 +27,16 @@ interface AppContextType {
   pendingSuggestion: string
   hasExistingChat: boolean
   isReturnHomeMode: boolean
+  
+  // 3-Stage Conversation Flow State
+  conversationFlow: ConversationFlowState
+  currentStage: 'initial' | 'stage_1' | 'stage_2a' | 'stage_2b' | 'stage_2c' | 'stage_3' | 'emergency' | 'complete'
+  inputAnalysis: InputAnalysis | null
+  medicalCategory: MedicalCategory | null
+  confidenceAssessment: ConfidenceAssessment | null
+  progressiveState: OptimizedProgressiveState | null
+  isProgressiveMode: boolean
+  emergencyAssessment: any | null
   
   // Menu state
   activeMenu: MenuType
@@ -52,6 +69,21 @@ interface AppContextType {
   handleDontSave: () => void
   handleCancelSave: () => void
   handleManualSave: () => Promise<boolean | void>
+  
+  // 3-Stage Conversation Flow Actions
+  startConversationFlow: (message: string) => Promise<void>
+  handleStage1Analysis: (message: string) => Promise<void>
+  handleStage2AQuestions: (answers: string[]) => Promise<void>
+  handleStage2BConfidence: () => Promise<void>
+  handleStage2CProgressive: (answers: string[]) => Promise<void>
+  handleStage3Final: () => Promise<void>
+  handleEmergencyFastTrack: (message: string) => Promise<void>
+  resetConversationFlow: () => void
+  updateProgressiveState: (newState: Partial<OptimizedProgressiveState>) => void
+  setProgressiveMode: (enabled: boolean) => void
+  
+  // Enhanced message handling
+  handleEnhancedMessage: (text: string, useEnhancedFlow?: boolean) => Promise<void>
   
   // Toast actions
   showToast: (message: string, type?: 'success' | 'error' | 'info' | 'warning', duration?: number) => string

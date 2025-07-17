@@ -1,0 +1,704 @@
+/**
+ * Confidence Indicators Styles
+ * 
+ * Comprehensive styling for confidence visualization components
+ * including progress bars, color-coded levels, and animations.
+ */
+
+/* ==========================================================================
+   Base Confidence Indicator Styles
+   ========================================================================== */
+
+.confidence-indicator {
+  font-family: 'Kalameh', Arial, sans-serif;
+  direction: rtl;
+  text-align: right;
+}
+
+/* Compact variant */
+.confidence-indicator.compact {
+  display: inline-flex;
+  align-items: center;
+}
+
+.confidence-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Inline variant */
+.confidence-indicator.inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+}
+
+.confidence-indicator.inline .confidence-text {
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Detailed Confidence Indicator
+   ========================================================================== */
+
+.confidence-indicator.detailed {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 12px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.confidence-main {
+  margin-bottom: 16px;
+}
+
+.confidence-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.confidence-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.confidence-icon {
+  font-size: 1.25rem;
+}
+
+.confidence-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.confidence-score-display {
+  background: #f3f4f6;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid #d1d5db;
+}
+
+.score-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* ==========================================================================
+   Progress Bars
+   ========================================================================== */
+
+.confidence-bar-container {
+  margin-bottom: 8px;
+}
+
+.confidence-bar,
+.completeness-bar,
+.category-bar,
+.target-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #f3f4f6;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.confidence-fill,
+.completeness-fill,
+.category-fill,
+.target-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+/* Animated fills */
+.animated-fill {
+  animation: fillAnimation 1s ease-out forwards;
+  width: 0 !important;
+}
+
+@keyframes fillAnimation {
+  to {
+    width: var(--target-width, 0%) !important;
+  }
+}
+
+.confidence-description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* ==========================================================================
+   Information Completeness
+   ========================================================================== */
+
+.information-completeness {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.completeness-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.completeness-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.completeness-score {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.completeness-message {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* ==========================================================================
+   Category Breakdown
+   ========================================================================== */
+
+.confidence-details {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 16px;
+}
+
+.details-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.2s ease;
+}
+
+.details-toggle:hover {
+  color: #2563eb;
+}
+
+.details-content {
+  margin-top: 12px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.category-breakdown h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 12px;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.category-item {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.category-icon {
+  font-size: 0.875rem;
+}
+
+.category-name {
+  flex: 1;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.category-score {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.category-bar {
+  height: 4px;
+}
+
+/* ==========================================================================
+   Confidence Reasoning and Recommendations
+   ========================================================================== */
+
+.confidence-reasoning,
+.confidence-recommendations {
+  margin-top: 12px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.confidence-reasoning h4,
+.confidence-recommendations h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.confidence-reasoning p {
+  font-size: 0.875rem;
+  color: #4b5563;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.confidence-recommendations ul {
+  margin: 0;
+  padding-right: 16px;
+  list-style-type: disc;
+}
+
+.confidence-recommendations li {
+  font-size: 0.875rem;
+  color: #4b5563;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+/* ==========================================================================
+   Confidence Trend
+   ========================================================================== */
+
+.confidence-trend {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 12px 0;
+}
+
+.trend-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.trend-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.trend-indicator {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.trend-indicator.positive {
+  color: #059669;
+}
+
+.trend-indicator.negative {
+  color: #dc2626;
+}
+
+.trend-indicator.neutral {
+  color: #6b7280;
+}
+
+.trend-chart {
+  height: 60px;
+  margin-bottom: 8px;
+}
+
+.trend-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.trend-line {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: drawLine 2s ease-out forwards;
+}
+
+@keyframes drawLine {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.trend-point {
+  opacity: 0;
+  animation: showPoint 0.3s ease-out forwards;
+}
+
+.trend-point:nth-child(2) { animation-delay: 0.2s; }
+.trend-point:nth-child(3) { animation-delay: 0.4s; }
+.trend-point:nth-child(4) { animation-delay: 0.6s; }
+.trend-point:nth-child(5) { animation-delay: 0.8s; }
+
+@keyframes showPoint {
+  to {
+    opacity: 1;
+  }
+}
+
+.trend-summary {
+  text-align: center;
+}
+
+.trend-range {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* ==========================================================================
+   Confidence Monitor
+   ========================================================================== */
+
+.confidence-monitor {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 12px 0;
+}
+
+.monitor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.monitor-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.improvement-indicator {
+  font-size: 1rem;
+}
+
+.improvement-indicator.improving {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.monitor-display {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.current-confidence {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.current-label {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+.current-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.target-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.target-label {
+  font-size: 0.75rem;
+  opacity: 0.9;
+}
+
+.target-bar {
+  background: rgba(255, 255, 255, 0.2);
+  height: 6px;
+  border-radius: 3px;
+}
+
+.target-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.target-achieved {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+/* ==========================================================================
+   Progressive Question Card Integration
+   ========================================================================== */
+
+.progressive-question-card .confidence-indicator {
+  margin: 8px 0;
+}
+
+.progressive-question-card .confidence-indicator.compact {
+  margin: 4px 0;
+}
+
+/* ==========================================================================
+   Chat Message Integration
+   ========================================================================== */
+
+.chat-message .confidence-indicator {
+  margin-top: 12px;
+  font-size: 0.875rem;
+}
+
+.chat-message.bot-message .confidence-indicator.detailed {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.chat-message.low-confidence {
+  border-right: 4px solid #ef4444;
+}
+
+.chat-message.low-confidence .confidence-indicator {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .confidence-indicator.detailed {
+    padding: 12px;
+    margin: 8px 0;
+  }
+  
+  .confidence-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .category-header {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  
+  .category-name {
+    min-width: 100px;
+  }
+  
+  .monitor-display {
+    gap: 8px;
+  }
+  
+  .current-confidence {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .confidence-indicator.detailed {
+    padding: 8px;
+  }
+  
+  .confidence-label {
+    font-size: 0.875rem;
+  }
+  
+  .score-value {
+    font-size: 1rem;
+  }
+  
+  .category-item {
+    padding: 6px;
+  }
+  
+  .category-header {
+    font-size: 0.75rem;
+  }
+}
+
+/* ==========================================================================
+   Dark Mode Support
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  .confidence-indicator.detailed {
+    background: #1f2937;
+    border-color: #374151;
+    color: #f9fafb;
+  }
+  
+  .confidence-label {
+    color: #f9fafb;
+  }
+  
+  .confidence-score-display {
+    background: #374151;
+    border-color: #4b5563;
+  }
+  
+  .score-value {
+    color: #f9fafb;
+  }
+  
+  .confidence-description,
+  .completeness-message {
+    color: #d1d5db;
+  }
+  
+  .information-completeness {
+    background: #374151;
+    border-color: #4b5563;
+  }
+  
+  .category-item {
+    background: #374151;
+    border-color: #4b5563;
+  }
+  
+  .confidence-reasoning,
+  .confidence-recommendations {
+    background: #374151;
+    border-color: #4b5563;
+  }
+  
+  .confidence-trend {
+    background: #1f2937;
+    border-color: #374151;
+  }
+}
+
+/* ==========================================================================
+   Animation Utilities
+   ========================================================================== */
+
+.confidence-indicator.animated .confidence-fill {
+  animation: fillAnimation 1s ease-out forwards;
+}
+
+.confidence-indicator.animated .completeness-fill {
+  animation: fillAnimation 1s ease-out 0.2s forwards;
+}
+
+.confidence-indicator.animated .category-fill {
+  animation: fillAnimation 0.8s ease-out forwards;
+}
+
+/* Hover effects */
+.confidence-indicator.detailed:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+.category-item:hover {
+  background: #f8fafc;
+  transition: background-color 0.2s ease;
+}
+
+/* Focus states for accessibility */
+.details-toggle:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Print styles */
+@media print {
+  .confidence-indicator {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+  
+  .confidence-fill,
+  .completeness-fill,
+  .category-fill {
+    background: #000 !important;
+  }
+}

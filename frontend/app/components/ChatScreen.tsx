@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Message } from '../page'
 import { useAppContext } from '../contexts'
 import HistoryModal from './HistoryModal'
+import { getConfidenceLevel, CONFIDENCE_LEVELS } from '../lib/prompts'
 
 // Function to format message text with basic Markdown support
 function formatMessageText(text: string): string {
@@ -22,6 +23,196 @@ function formatMessageText(text: string): string {
     .replace(/&lt;em&gt;/g, '<em>')
     .replace(/&lt;\/em&gt;/g, '</em>')
     .replace(/&lt;br&gt;/g, '<br>')
+}
+
+// Confidence Indicator Component
+function ConfidenceIndicator({ 
+  confidenceScore, 
+  informationCompleteness,
+  showDetails = false 
+}: { 
+  confidenceScore?: number
+  informationCompleteness?: number
+  showDetails?: boolean 
+}) {
+  if (confidenceScore === undefined) return null
+
+  const confidenceLevel = getConfidenceLevel(confidenceScore)
+  
+  return (
+    <div className="confidence-indicator">
+      <div className="confidence-header">
+        <span className="confidence-icon" style={{ color: confidenceLevel.color }}>
+          {confidenceLevel.icon}
+        </span>
+        <span className="confidence-label">
+          {confidenceLevel.label} ({confidenceScore}%)
+        </span>
+      </div>
+      
+      <div className="confidence-bar">
+        <div 
+          className="confidence-fill"
+          style={{ 
+            width: `${confidenceScore}%`,
+            backgroundColor: confidenceLevel.color
+          }}
+        />
+      </div>
+      
+      {showDetails && (
+        <div className="confidence-details">
+          <p className="confidence-description">{confidenceLevel.description}</p>
+          
+          {informationCompleteness !== undefined && (
+            <div className="information-completeness">
+              <span className="completeness-label">
+                کیفیت اطلاعات: {informationCompleteness}%
+              </span>
+              <div className="completeness-bar">
+                <div 
+                  className="completeness-fill"
+                  style={{ 
+                    width: `${informationCompleteness}%`,
+                    backgroundColor: informationCompleteness >= 70 ? '#22c55e' : 
+                                   informationCompleteness >= 50 ? '#f59e0b' : '#ef4444'
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Response Quality Metadata Component
+function ResponseQualityMetadata({ 
+  message 
+}: { 
+  message: Message 
+}) {
+  if (message.type === 'user' || !message.metadata) return null
+
+  const { 
+    confidenceScore, 
+    informationCompleteness, 
+    responseTime, 
+    emergencyLevel,
+    uncertaintyAreas 
+  } = message.metadata
+
+  return (
+    <div className="response-quality-metadata">
+      {/* Confidence Indicator */}
+      <ConfidenceIndicator 
+        confidenceScore={confidenceScore}
+        informationCompleteness={informationCompleteness}
+        showDetails={true}
+      />
+      
+      {/* Emergency Level Indicator */}
+      {emergencyLevel && emergencyLevel !== 'low' && (
+        <div className={`emergency-level-indicator ${emergencyLevel}`}>
+          <span className="emergency-icon">
+            {emergencyLevel === 'critical' ? '🚨' : 
+             emergencyLevel === 'high' ? '⚠️' : '⚡'}
+          </span>
+          <span className="emergency-text">
+            سطح فوریت: {
+              emergencyLevel === 'critical' ? 'بحرانی' :
+              emergencyLevel === 'high' ? 'بالا' :
+              emergencyLevel === 'medium' ? 'متوسط' : 'پایین'
+            }
+          </span>
+        </div>
+      )}
+      
+      {/* Response Time */}
+      {responseTime && (
+        <div className="response-time-indicator">
+          <span className="time-icon">⏱️</span>
+          <span className="time-text">زمان پاسخ: {responseTime}ms</span>
+        </div>
+      )}
+      
+      {/* Uncertainty Areas */}
+      {uncertaintyAreas && uncertaintyAreas.length > 0 && (
+        <div className="uncertainty-areas">
+          <span className="uncertainty-label">نواحی نیازمند بررسی بیشتر:</span>
+          <div className="uncertainty-tags">
+            {uncertaintyAreas.map((area, index) => (
+              <span key={index} className="uncertainty-tag">
+                {area}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {/* Information Quality Breakdown */}
+      {informationCompleteness !== undefined && (
+        <div className="information-breakdown">
+          <details className="breakdown-details">
+            <summary className="breakdown-summary">
+              جزئیات کیفیت اطلاعات
+            </summary>
+            <div className="breakdown-content">
+              <div className="quality-metrics">
+                <div className="metric-item">
+                  <span className="metric-label">🔍 جزئیات علائم:</span>
+                  <span className="metric-value">{message.metadata.symptomDetails || 'N/A'}%</span>
+                </div>
+                <div className="metric-item">
+                  <span className="metric-label">⏱️ اطلاعات زمانی:</span>
+                  <span className="metric-value">{message.metadata.timeInfo || 'N/A'}%</span>
+                </div>
+                <div className="metric-item">
+                  <span className="metric-label">📍 محل و شدت:</span>
+                  <span className="metric-value">{message.metadata.locationSeverity || 'N/A'}%</span>
+                </div>
+                <div className="metric-item">
+                  <span className="metric-label">🏥 سابقه پزشکی:</span>
+                  <span className="metric-value">{message.metadata.medicalHistory || 'N/A'}%</span>
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Progressive Question Indicator
+function ProgressiveQuestionIndicator({ 
+  currentRound, 
+  totalRounds, 
+  questionsAsked 
+}: { 
+  currentRound?: number
+  totalRounds?: number
+  questionsAsked?: number 
+}) {
+  if (!currentRound || !totalRounds) return null
+
+  return (
+    <div className="progressive-question-indicator">
+      <div className="progress-header">
+        <span className="progress-icon">🔄</span>
+        <span className="progress-text">
+          مرحله {currentRound} از {totalRounds} - {questionsAsked} سوال پرسیده شده
+        </span>
+      </div>
+      <div className="progress-bar">
+        <div 
+          className="progress-fill"
+          style={{ width: `${(currentRound / totalRounds) * 100}%` }}
+        />
+      </div>
+    </div>
+  )
 }
 
 export default function ChatScreen() {
@@ -176,6 +367,8 @@ export default function ChatScreen() {
               message.isError ? 'error-message' : ''
             } ${
               message.isEmergency ? 'emergency-message' : ''
+            } ${
+              message.metadata?.confidenceScore !== undefined && message.metadata.confidenceScore < 50 ? 'low-confidence' : ''
             }`}
           >
             {message.isLoading && (
@@ -185,15 +378,44 @@ export default function ChatScreen() {
                 <span></span>
               </div>
             )}
+            
+            {/* Progressive Question Indicator for bot messages */}
+            {message.type === 'bot' && message.metadata?.progressiveState && (
+              <ProgressiveQuestionIndicator 
+                currentRound={message.metadata.progressiveState.currentRound}
+                totalRounds={message.metadata.progressiveState.maxRounds}
+                questionsAsked={message.metadata.progressiveState.questionsAsked}
+              />
+            )}
+            
             <div 
               className="message-content"
               dangerouslySetInnerHTML={{
                 __html: formatMessageText(message.text)
               }}
             />
+            
+            {/* Response Quality Metadata for bot messages */}
+            <ResponseQualityMetadata message={message} />
+            
+            {/* Emergency Warning */}
             {message.isEmergency && (
               <div className="emergency-warning">
                 ⚠️ این پیام ممکن است نشان‌دهنده وضعیت اورژانسی باشد. در صورت نیاز فوراً با پزشک تماس بگیرید.
+              </div>
+            )}
+            
+            {/* Low Confidence Warning */}
+            {message.type === 'bot' && message.metadata?.confidenceScore !== undefined && message.metadata.confidenceScore < 50 && (
+              <div className="low-confidence-warning">
+                ⚠️ سطح اطمینان پایین - حتماً با پزشک مشورت کنید
+              </div>
+            )}
+            
+            {/* Information Completeness Suggestion */}
+            {message.type === 'bot' && message.metadata?.informationCompleteness !== undefined && message.metadata.informationCompleteness < 60 && (
+              <div className="information-suggestion">
+                💡 برای راهنمایی دقیق‌تر، اطلاعات بیشتری درباره علائم، زمان شروع و شدت آن‌ها ارائه دهید
               </div>
             )}
           </div>

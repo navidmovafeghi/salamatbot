@@ -1,5 +1,7 @@
 import { useState, KeyboardEvent, useRef, useEffect } from 'react'
 import { useAppContext } from '../contexts'
+import ProgressiveQuestionCard from './ProgressiveQuestionCard'
+import { CategoryQuestion, ProgressiveQuestionContext } from '../types/conversation'
 
 export default function ChatForm() {
   // Get all needed data from context
@@ -14,6 +16,15 @@ export default function ChatForm() {
   } = useAppContext()
   const [inputValue, setInputValue] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  
+  // Progressive questioning state
+  const [showProgressiveQuestions, setShowProgressiveQuestions] = useState(false)
+  const [progressiveQuestions, setProgressiveQuestions] = useState<CategoryQuestion[]>([])
+  const [progressiveContext, setProgressiveContext] = useState<ProgressiveQuestionContext | undefined>()
+  const [currentRound, setCurrentRound] = useState(1)
+  const [totalRounds, setTotalRounds] = useState(1)
+  const [questionsAsked, setQuestionsAsked] = useState(0)
+  const [isProgressiveLoading, setIsProgressiveLoading] = useState(false)
 
   // Auto-resize textarea
   const adjustTextareaHeight = () => {
@@ -51,7 +62,96 @@ export default function ChatForm() {
     if (trimmedMessage && !isLoading) {
       setInputValue('')
       await handleSendMessage(trimmedMessage)
+      
+      // Check if we should show progressive questions after sending
+      // This would be determined by the response metadata
+      checkForProgressiveQuestions()
     }
+  }
+
+  // Check if progressive questions should be shown
+  const checkForProgressiveQuestions = () => {
+    // This would typically be triggered by the API response
+    // For now, we'll simulate the logic
+    // In real implementation, this would be called when the API indicates
+    // that progressive questions are needed
+  }
+
+  // Handle progressive question answers
+  const handleProgressiveAnswers = async (answers: string[]) => {
+    setIsProgressiveLoading(true)
+    
+    try {
+      // Combine answers into a single message
+      const combinedMessage = answers
+        .map((answer, index) => `سوال ${index + 1}: ${answer}`)
+        .join('\n\n')
+      
+      // Send the progressive answers
+      await handleSendMessage(combinedMessage)
+      
+      // Update state
+      setQuestionsAsked(prev => prev + answers.length)
+      setCurrentRound(prev => prev + 1)
+      
+      // Hide progressive questions for now
+      setShowProgressiveQuestions(false)
+      
+    } catch (error) {
+      console.error('Error handling progressive answers:', error)
+    } finally {
+      setIsProgressiveLoading(false)
+    }
+  }
+
+  // Handle skipping a question
+  const handleSkipQuestion = (questionIndex: number) => {
+    console.log(`Skipping question ${questionIndex}`)
+    // In real implementation, this would update the question state
+  }
+
+  // Handle clarification request
+  const handleRequestClarification = (questionIndex: number, clarification: string) => {
+    console.log(`Clarification requested for question ${questionIndex}: ${clarification}`)
+    // In real implementation, this would send the clarification request
+  }
+
+  // Simulate showing progressive questions (for testing)
+  const simulateProgressiveQuestions = () => {
+    const sampleQuestions: CategoryQuestion[] = [
+      {
+        id: 'severity_q1',
+        text: 'لطفاً شدت درد خود را از ۱ تا ۱۰ بیان کنید',
+        type: 'severity',
+        priority: 90,
+        targetedAreas: ['severity_clarification'],
+        prerequisites: [],
+        informationValue: 85,
+        urgencyRelevance: 90,
+        estimatedResponseTime: 15,
+        isRequired: true,
+        canSkip: false
+      },
+      {
+        id: 'timing_q1',
+        text: 'این علائم از چه زمانی شروع شده است؟',
+        type: 'timing',
+        priority: 85,
+        targetedAreas: ['time_clarification'],
+        prerequisites: [],
+        informationValue: 80,
+        urgencyRelevance: 85,
+        estimatedResponseTime: 20,
+        isRequired: false,
+        canSkip: true
+      }
+    ]
+
+    setProgressiveQuestions(sampleQuestions)
+    setShowProgressiveQuestions(true)
+    setCurrentRound(1)
+    setTotalRounds(2)
+    setQuestionsAsked(0)
   }
 
   // Check if we can send (has text and not loading)
@@ -109,6 +209,37 @@ export default function ChatForm() {
     )
   }
 
+  // Show progressive questions if active
+  if (showProgressiveQuestions && progressiveQuestions.length > 0) {
+    return (
+      <div className="chat-form progressive-mode">
+        <ProgressiveQuestionCard
+          questions={progressiveQuestions}
+          currentRound={currentRound}
+          totalRounds={totalRounds}
+          questionsAsked={questionsAsked}
+          onAnswerSubmit={handleProgressiveAnswers}
+          onSkipQuestion={handleSkipQuestion}
+          onRequestClarification={handleRequestClarification}
+          isLoading={isProgressiveLoading}
+          context={progressiveContext}
+        />
+        
+        {/* Option to return to normal chat */}
+        <div className="progressive-actions">
+          <button
+            className="return-to-chat-btn secondary-btn"
+            onClick={() => setShowProgressiveQuestions(false)}
+            disabled={isProgressiveLoading}
+          >
+            <i className="fa-solid fa-arrow-right"></i>
+            بازگشت به چت معمولی
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <form className="chat-form" onSubmit={handleSubmit}>
       <div className={`chat-input-area ${canSend ? 'has-content' : ''} ${isLoading ? 'loading' : ''}`}>
@@ -124,6 +255,20 @@ export default function ChatForm() {
           rows={1}
         />
         
+        <div className="input-actions">
+          {/* Progressive questions trigger button (for testing) */}
+          {isChatMode && (
+            <button
+              type="button"
+              className="progressive-trigger-btn"
+              onClick={simulateProgressiveQuestions}
+              disabled={isLoading}
+              title="تست سوالات تدریجی"
+            >
+              <i className="fa-solid fa-list-check"></i>
+            </button>
+          )}
+        </div>
         
         <div className="submit-area">
           <button 
@@ -140,6 +285,22 @@ export default function ChatForm() {
             )}
           </button>
         </div>
+      </div>
+      
+      {/* Character count indicator */}
+      <div className="input-meta">
+        <span className={`char-count ${isNearLimit ? 'near-limit' : ''}`}>
+          {charCount}/{maxChars}
+        </span>
+        
+        {isChatMode && (
+          <div className="input-hints">
+            <span className="hint">
+              <i className="fa-solid fa-lightbulb"></i>
+              برای دریافت راهنمایی دقیق‌تر، علائم، زمان شروع و شدت را ذکر کنید
+            </span>
+          </div>
+        )}
       </div>
     </form>
   )

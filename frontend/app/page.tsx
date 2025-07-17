@@ -11,6 +11,10 @@ import ToastContainer from './components/ToastContainer'
 import CommonQuestionsModal from './components/CommonQuestionsModal'
 import { AppProvider, useAppContext } from './contexts'
 
+// Import enhanced types
+import { EnhancedMessage, MessageType, QuestionType } from './types/conversation'
+
+// Keep the original Message interface for backward compatibility
 export interface Message {
   id: string
   text: string
@@ -19,6 +23,21 @@ export interface Message {
   isLoading?: boolean
   isError?: boolean
   isEmergency?: boolean
+  
+  // Enhanced properties for new conversation flow
+  messageType?: MessageType
+  confidenceScore?: number
+  informationValue?: number
+  processingTimeMs?: number
+  questionId?: string
+  questionType?: QuestionType
+  isProgressiveQuestion?: boolean
+  responseMetadata?: {
+    method: string
+    apiCallsUsed: number
+    costEstimate: number
+    informationCompleteness: number
+  }
 }
 
 // Main App Component (now just handles rendering)
