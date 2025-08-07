@@ -2,8 +2,6 @@
 
 import { useState } from 'react'
 import InitialScreen from './components/InitialScreen'
-import NewHeader from './components/tmp_rovodev_NewHeader'
-import CTASection from './components/tmp_rovodev_CTASection'
 import ChatScreen from './components/ChatScreen'
 import ChatForm from './components/ChatForm'
 import SplashScreen from './components/SplashScreen'
@@ -50,10 +48,8 @@ function AppContent() {
 
   return (
     <main className={`container ${isChatMode ? 'chat-active' : ''}`}>
-      <NewHeader />
-      {/* <InitialScreen /> */}
+      <InitialScreen />
       <ChatScreen />
-      {!isChatMode && <CTASection />}
       <ChatForm />
       
       {/* Action Buttons - Between ChatForm and Disclaimer */}
