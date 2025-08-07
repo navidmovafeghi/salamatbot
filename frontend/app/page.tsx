@@ -19,9 +19,10 @@ export interface Message {
   isLoading?: boolean
   isError?: boolean
   isEmergency?: boolean
+  options?: string[]
 }
 
-// Main App Component (now just handles rendering)
+// Main App Component (restored to original design)
 function AppContent() {
   const {
     showSplash,
@@ -41,8 +42,6 @@ function AppContent() {
 
   // State for common questions modal
   const [isCommonQuestionsOpen, setIsCommonQuestionsOpen] = useState(false)
-
-
 
   // Show splash screen first
   if (showSplash) {

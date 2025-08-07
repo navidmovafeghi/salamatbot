@@ -46,21 +46,36 @@ export const useChatManager = () => {
     setMessages(prev => [...prev, loadingMessage])
 
     try {
-      // Prepare conversation history for API
-      const conversationHistory = messages.map(msg => ({
-        role: msg.type === 'user' ? 'user' : 'assistant',
-        content: msg.text
-      }))
+      // Initialize session if needed (for unified API)
+      let sessionId = sessionStorage.getItem('unifiedSessionId')
+      if (!sessionId) {
+        const initResponse = await fetch('/api/unified', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'new_session' })
+        })
+        const initData = await initResponse.json()
+        sessionId = initData.sessionId
+        if (initData.sessionId) {
+          sessionStorage.setItem('unifiedSessionId', initData.sessionId)
+          sessionId = initData.sessionId
+        }
+      }
 
-      // Call the API
-      const response = await fetch('/api/chat', {
+      // Only proceed if we have a valid sessionId
+      if (!sessionId) {
+        throw new Error('Could not initialize session')
+      }
+
+      // Call the unified API
+      const response = await fetch('/api/unified', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           message: text,
-          conversationHistory: conversationHistory
+          sessionId: sessionId
         })
       })
 
@@ -69,14 +84,25 @@ export const useChatManager = () => {
       // Remove loading message and add real response
       setMessages(prev => {
         const withoutLoading = prev.filter(msg => !msg.isLoading)
+        
+        // Extract response text from unified API format
+        let responseText = data.message || data.error || 'خطایی رخ داده است.'
+        
+        // Add subtle category indicator if available
+        if (data.categoryName && data.metadata?.categorySwitch) {
+          responseText = `🔍 ${data.categoryName}\n\n${responseText}`
+        }
+        
         const botMessage: Message = {
           id: (Date.now() + 2).toString(),
-          text: data.response || data.error || 'خطایی رخ داده است.',
+          text: responseText,
           type: 'bot',
           timestamp: new Date(),
-          isError: !response.ok,
-          isEmergency: data.isEmergency || false
+          isError: !response.ok || data.error,
+          isEmergency: data.nextAction === 'escalate' || false,
+          options: data.options || undefined
         }
+        
         return [...withoutLoading, botMessage]
       })
 

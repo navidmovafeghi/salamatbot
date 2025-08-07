@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   try {
     // Parse the incoming request body
     const body = await request.json();
-    const { message, conversationHistory = [] } = body;
+    const { message, conversationHistory = [], mode = 'legacy' } = body;
 
     // Validate the message
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       response: aiResponse,
       isEmergency: isEmergency,
+      mode: 'legacy',
       timestamp: new Date().toISOString()
     });
 
@@ -78,6 +79,35 @@ export async function POST(request: NextRequest) {
         error: 'متأسفانه خطایی رخ داده است. لطفاً دوباره تلاش کنید.',
         fallbackResponse: 'در حال حاضر امکان پاسخ‌گویی وجود ندارد. لطفاً با پزشک مشورت کنید.'
       },
+      { status: 500 }
+    );
+  }
+}
+
+// GET handler for API info
+export async function GET(request: NextRequest) {
+  try {
+    return NextResponse.json({
+      status: 'active',
+      modes: {
+        legacy: {
+          description: 'Original SalamatBot chat with Gemini',
+          provider: 'Google Gemini',
+          features: ['Emergency detection', 'Medical prompts', 'Persian support']
+        },
+        triage: {
+          description: 'Cost-optimized triage system',
+          provider: 'OpenAI via OpenRouter',
+          endpoint: '/api/triage',
+          features: ['5-level classification', 'Progressive questioning', 'Template optimization']
+        }
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Chat API GET error:', error);
+    return NextResponse.json(
+      { error: 'Failed to get API info' },
       { status: 500 }
     );
   }

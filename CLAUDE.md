@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**SalamatBot** is a sophisticated Persian medical chatbot built with Next.js that implements a 3-stage enhanced conversation flow system. The application combines smart question selection, confidence assessment, and progressive disclosure to provide accurate medical guidance while optimizing API usage and response times.
+**SalamatBot** is a sophisticated Persian medical chatbot focused on **symptom checking and medical triage**. The application features a **dual-mode system**: a cost-optimized triage mode for symptom classification and a legacy general chat mode. The primary triage system uses a 2-stage flow optimized for 60-70% cost reduction while maintaining medical accuracy.
 
 ## Key Commands
 
@@ -19,82 +19,75 @@ npm run lint         # Run ESLint
 ```
 
 ### Environment Setup
-- Create `frontend/.env.local` with `GEMINI_API_KEY=your_gemini_api_key`
-- Gemini API key is required for all chat functionality
+- Create `frontend/.env.local` with the following:
+  ```
+  GEMINI_API_KEY=your_gemini_api_key          # For legacy general chat mode
+  OPENROUTER_API_KEY=your_openrouter_api_key  # For triage system (primary)
+  ```
+- **Primary Mode**: Triage system uses OpenAI GPT-4o via OpenRouter
+- **Legacy Mode**: General chat uses Google Gemini
 
 ## Architecture Overview
 
-### 3-Stage Conversation Flow System
-The application implements a sophisticated medical conversation system:
+### Dual-Mode System
 
-**Stage 1: Smart Classification & Emergency Fast-Track**
-- Input analysis using Persian medical keywords
-- Emergency detection with bypass logic
-- Medical category classification (7 categories)
-- Located in: `frontend/app/lib/inputAnalysis.ts`, `frontend/app/lib/medicalCategories.ts`
+**Primary Mode: Medical Triage System**
+The main focus - a cost-optimized 2-stage symptom checking system:
 
-**Stage 2A: Smart Question Selection**
-- Intelligent question selection based on missing information
-- Category-specific question targeting
-- Implemented in: `frontend/app/lib/questionSelection.ts`, `frontend/app/lib/questionGenerator.ts`
+**Stage 1: Medical Interview**
+- Progressive questioning with Persian medical vocabulary
+- Smart question selection based on user input
+- One question per response with quick-answer options
+- Continue until confident classification possible
 
-**Stage 2B: Confidence Assessment**
-- Hybrid confidence scoring (quick + AI assessment)
-- Medical safety adjustments for conservative scoring
-- Files: `frontend/app/lib/confidenceAssessment.ts`, `frontend/app/lib/hybridConfidence.ts`
+**Stage 2: Classification & Response**
+- 5-level triage classification (Emergency → Self-Care)
+- Template-driven response generation (60-70% cost savings)
+- Category-specific medical guidance
+- Emergency fast-track with direct action buttons
 
-**Stage 2C: Progressive Questions (if needed)**
-- Adaptive questioning based on confidence gaps
-- Uncertainty area targeting
-- Logic in: `frontend/app/lib/progressiveQuestions.ts`
-
-**Stage 3: Enhanced Final Response**
-- Comprehensive medical advice with confidence context
-- Information completeness indicators
-- Emergency-specific response templates
+**Legacy Mode: General Medical Chat**
+- Original SalamatBot general medical consultation
+- Broader medical Q&A capabilities  
+- Google Gemini integration
+- Maintained for backward compatibility
 
 ### API Architecture
-Three main API endpoints handle the conversation flow:
 
-**Primary Chat API** (`frontend/app/api/chat/route.ts`)
-- Handles all conversation stages with request type routing
-- Supports legacy chat requests for backward compatibility
-- Emergency fast-track processing
-- 3-stage flow orchestration
+**Primary Triage API** (`frontend/app/api/triage/route.ts`)
+- **NEW**: Cost-optimized medical triage system
+- Handles 2-stage conversation flow (interview → classification)
+- Session-based conversation management
+- Template-driven response generation
+- OpenAI GPT-4o integration via OpenRouter
 
-**Confidence Assessment API** (`frontend/app/api/confidence/route.ts`)
-- Dedicated confidence calculation endpoint
-- Supports quick, AI, and optimized assessment methods
-- Used for uncertainty evaluation
-
-**Classification API** (`frontend/app/api/classify/route.ts`)
-- Input analysis and medical categorization
-- Emergency detection
-- Question selection assistance
+**Legacy Chat API** (`frontend/app/api/chat/route.ts`)
+- Original general medical chat functionality
+- Google Gemini integration
+- Backward compatibility support
+- Simple request/response pattern
 
 ### Key Libraries & Utilities
 
-**Core Logic Libraries** (all in `frontend/app/lib/`):
-- `inputAnalysis.ts` - Persian medical input processing
-- `medicalCategories.ts` - 7 medical categories with question sets
-- `confidenceAssessment.ts` - Rule-based confidence scoring
-- `hybridConfidence.ts` - Combined quick+AI confidence assessment
-- `questionSelection.ts` - Smart question selection algorithms
-- `questionGenerator.ts` - Dynamic question generation
-- `progressiveQuestions.ts` - Adaptive follow-up questioning
-- `prompts.ts` - Medical prompts and emergency detection
-- `systemConfig.ts` - System configuration and thresholds
-- `performanceOptimizer.ts` - API call optimization and caching
+**Triage System Libraries** (all in `frontend/app/lib/`):
+- `triageTemplates.ts` - **NEW**: 5-level classification templates with UI structure
+- `triagePrompts.ts` - **NEW**: Cost-optimized prompts for medical triage
+- `openai.ts` - **NEW**: OpenAI integration via OpenRouter proxy
+
+**Legacy System Libraries**:
+- `prompts.ts` - Original medical prompts and emergency detection  
 - `gemini.ts` - Google Gemini API integration
 
 ### Frontend Architecture
 
-**Component Structure**:
-- `ChatScreen.tsx` - Main chat interface with confidence indicators
-- `ChatForm.tsx` - Message input with progressive question support  
-- `ProgressiveQuestionCard.tsx` - Multi-stage questioning interface
-- `ConfidenceIndicator.tsx` - Visual confidence display
-- `EmergencyAlert.tsx` - Emergency situation handling
+**Triage Components** (NEW):
+- `ModeSelector.tsx` - **NEW**: Dual-mode selection interface
+- `TriageChat.tsx` - **NEW**: Complete triage conversation interface
+- `TriageResult.tsx` - **NEW**: 5-level classification results with templates
+
+**Legacy Components**:
+- `ChatScreen.tsx` - Original chat interface
+- `ChatForm.tsx` - Original message input form
 - `InitialScreen.tsx` - Welcome screen with prompt suggestions
 
 **State Management**:

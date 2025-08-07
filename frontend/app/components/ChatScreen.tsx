@@ -43,6 +43,7 @@ export default function ChatScreen() {
     isSessionSaved,
     handleManualSave,
     showToast,
+    handleSendMessage,
   } = useAppContext()
   
   // Component is only visible when in chat mode
@@ -103,6 +104,12 @@ export default function ChatScreen() {
       // If result is void/undefined, we don't show any toast
     } catch (error) {
       showToast('خطا در ذخیره گفتگو. لطفاً دوباره تلاش کنید.', 'error', 3000)
+    }
+  }
+
+  const handleOptionClick = (option: string) => {
+    if (handleSendMessage) {
+      handleSendMessage(option)
     }
   }
 
@@ -191,6 +198,20 @@ export default function ChatScreen() {
                 __html: formatMessageText(message.text)
               }}
             />
+            {/* Quick Options */}
+            {message.options && message.options.length > 0 && (
+              <div className="message-options">
+                {message.options.map((option, index) => (
+                  <button
+                    key={index}
+                    className="option-btn"
+                    onClick={() => handleOptionClick(option)}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            )}
             {message.isEmergency && (
               <div className="emergency-warning">
                 ⚠️ این پیام ممکن است نشان‌دهنده وضعیت اورژانسی باشد. در صورت نیاز فوراً با پزشک تماس بگیرید.
