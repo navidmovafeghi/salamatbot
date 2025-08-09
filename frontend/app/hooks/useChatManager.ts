@@ -100,7 +100,8 @@ export const useChatManager = () => {
           timestamp: new Date(),
           isError: !response.ok || data.error,
           isEmergency: data.nextAction === 'escalate' || false,
-          options: data.options || undefined
+          options: data.options || undefined,
+          specialFeatures: data.specialFeatures || undefined
         }
         
         return [...withoutLoading, botMessage]

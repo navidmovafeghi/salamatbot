@@ -113,10 +113,29 @@ export default function ChatScreen() {
     }
   }
 
+  const handleQuickAction = (action: { label: string; action: string; type: string; phone?: string }) => {
+    if (action.phone && (action.action === 'call_emergency' || action.action === 'call_ambulance')) {
+      // Handle phone call action
+      if (typeof window !== 'undefined') {
+        window.location.href = `tel:${action.phone}`
+      }
+    } else if (action.action === 'find_hospital') {
+      // Handle hospital finder action
+      if (typeof window !== 'undefined') {
+        window.open('https://www.google.com/maps/search/hospital+near+me', '_blank')
+      }
+    } else if (action.action === 'find_doctor') {
+      // Handle doctor finder action  
+      if (typeof window !== 'undefined') {
+        window.open('https://www.google.com/maps/search/doctor+near+me', '_blank')
+      }
+    }
+  }
+
   return (
     <div id="chat-screen">
-      {/* Chat Header with Menu */}
-      <div className="chat-header">
+      {/* Mobile Menu Header */}
+      <div className="chat-header mobile-only">
         <div className="main-menu-container menu-container">
           <button 
             className="main-menu-btn menu-trigger" 
@@ -172,6 +191,49 @@ export default function ChatScreen() {
         </div>
       </div>
 
+      {/* Desktop Right Sidebar */}
+      <div className="chat-sidebar desktop-only">
+        <button className="sidebar-btn" onClick={handleNewChatClick}>
+          <i className="fa-solid fa-plus"></i>
+          <span>جدید</span>
+        </button>
+        
+        <button className="sidebar-btn" onClick={handleHistoryClick}>
+          <i className="fa-solid fa-history"></i>
+          <span>تاریخچه</span>
+        </button>
+        
+        {/* Save button - only show for unsaved conversations */}
+        {!isSessionSaved && (
+          <button 
+            className={`sidebar-btn ${!canSaveSession ? 'disabled' : ''}`}
+            onClick={handleSaveSessionClick}
+            disabled={!canSaveSession}
+          >
+            <i className={`fa-solid ${saveStatus === 'saving' ? 'fa-spinner fa-spin' : 'fa-save'}`}></i>
+            <span>{saveStatus === 'saving' ? 'ذخیره...' : 'ذخیره'}</span>
+          </button>
+        )}
+        
+        {/* Saved indicator - show for saved conversations */}
+        {isSessionSaved && (
+          <div className="sidebar-btn saved-indicator">
+            <i className="fa-solid fa-check-circle"></i>
+            <span>محفوظ</span>
+          </div>
+        )}
+        
+        <button className="sidebar-btn" onClick={handleClearHistoryClick}>
+          <i className="fa-solid fa-trash"></i>
+          <span>پاک</span>
+        </button>
+        
+        <button className="sidebar-btn" onClick={handleReturnHomeClick}>
+          <i className="fa-solid fa-home"></i>
+          <span>خانه</span>
+        </button>
+      </div>
+
       {/* Chat Messages */}
       <div id="chat-history" ref={chatHistoryRef}>
         {messages.map((message) => (
@@ -212,6 +274,22 @@ export default function ChatScreen() {
                 ))}
               </div>
             )}
+
+            {/* Quick Action Buttons */}
+            {message.specialFeatures?.quickActions && message.specialFeatures.quickActions.length > 0 && (
+              <div className="quick-actions">
+                {message.specialFeatures.quickActions.map((action, index) => (
+                  <button
+                    key={index}
+                    className={`quick-action-btn ${action.type}`}
+                    onClick={() => handleQuickAction(action)}
+                  >
+                    {action.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {message.isEmergency && (
               <div className="emergency-warning">
                 ⚠️ این پیام ممکن است نشان‌دهنده وضعیت اورژانسی باشد. در صورت نیاز فوراً با پزشک تماس بگیرید.

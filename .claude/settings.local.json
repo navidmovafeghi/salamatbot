@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(rmdir:*)"
+      "Bash(rmdir:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   }

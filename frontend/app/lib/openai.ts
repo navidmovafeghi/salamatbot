@@ -76,7 +76,28 @@ export async function generateFinalTriageResponse(
   messages: ChatMessage[],
   category: string
 ): Promise<TriageResponse> {
-  return generateTriageResponse(messages, {
+  // Import the specialized end prompts
+  const { END_RESPONSE_PROMPTS } = await import('./triagePrompts');
+  
+  // Get the appropriate prompt for this category
+  const endPrompt = END_RESPONSE_PROMPTS[category as keyof typeof END_RESPONSE_PROMPTS];
+  
+  if (!endPrompt) {
+    console.warn(`No end prompt found for category: ${category}`);
+    return generateTriageResponse(messages, {
+      model: 'openai/gpt-4o',
+      temperature: 0.3,
+      max_tokens: 800
+    });
+  }
+
+  // Replace the system message with the specialized end prompt
+  const finalMessages: ChatMessage[] = [
+    { role: 'system', content: endPrompt },
+    ...messages.slice(1) // Skip original system message
+  ];
+
+  return generateTriageResponse(finalMessages, {
     model: 'openai/gpt-4o',
     temperature: 0.3,
     max_tokens: 800 // More tokens for detailed final responses

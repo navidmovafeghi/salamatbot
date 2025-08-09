@@ -18,6 +18,19 @@ export interface Message {
   isError?: boolean
   isEmergency?: boolean
   options?: string[]
+  specialFeatures?: {
+    quickActions?: Array<{
+      label: string
+      action: string
+      type: 'emergency' | 'info' | 'action'
+      phone?: string
+    }>
+    visualElements?: {
+      type: 'warning' | 'info' | 'success' | 'medical'
+      content: string
+    }
+    followUpSuggestions?: string[]
+  }
 }
 
 // Main App Component (restored to original design)

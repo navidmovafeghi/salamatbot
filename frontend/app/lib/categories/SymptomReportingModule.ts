@@ -57,12 +57,6 @@ export class SymptomReportingModule extends CategoryModule {
     message: string, 
     apiKey: string
   ): Promise<CategoryResponse> {
-    // Check for emergency first
-    const emergencyCheck = this.detectEmergency(message, session.conversation);
-    if (emergencyCheck.isEmergency && emergencyCheck.level === 'critical') {
-      return this.createEmergencyResponse(emergencyCheck);
-    }
-
     // Add user message to conversation
     session.conversation.push({
       role: 'user',
@@ -157,15 +151,9 @@ export class SymptomReportingModule extends CategoryModule {
     const template = getTriageTemplate(classification.category);
     
     try {
-      // Generate detailed final response
-      const endPrompt = this.getFinalResponsePrompt(classification.category);
-      const finalConversation = [
-        { role: 'system' as const, content: endPrompt },
-        ...session.conversation.slice(1) // Skip original system prompt
-      ];
-
+      // Generate detailed final response using specialized prompts
       const finalResponse = await generateFinalTriageResponse(
-        finalConversation, 
+        session.conversation, 
         classification.category
       );
 
@@ -179,7 +167,7 @@ export class SymptomReportingModule extends CategoryModule {
       return {
         message: this.formatFinalResponse(finalContent, template),
         isComplete: true,
-        nextAction: 'complete',
+        nextAction: classification.category === 'EMERGENCY' ? 'escalate' : 'complete',
         metadata: {
           classification: classification.category,
           template: template,
@@ -195,8 +183,9 @@ export class SymptomReportingModule extends CategoryModule {
       return {
         message: this.formatTemplateResponse(template),
         isComplete: true,
-        nextAction: 'complete',
-        metadata: { classification: classification.category, template }
+        nextAction: classification.category === 'EMERGENCY' ? 'escalate' : 'complete',
+        metadata: { classification: classification.category, template },
+        specialFeatures: this.getSpecialFeatures(classification.category, template)
       };
     }
   }
@@ -222,31 +211,6 @@ export class SymptomReportingModule extends CategoryModule {
     };
   }
 
-  private createEmergencyResponse(emergencyCheck: any): CategoryResponse {
-    return {
-      message: `🚨 **وضعیت اورژانسی تشخیص داده شد**\n\n${emergencyCheck.recommendation}\n\n**فوراً اقدام کنید:**`,
-      isComplete: true,
-      nextAction: 'escalate',
-      specialFeatures: {
-        quickActions: [
-          {
-            label: '📞 تماس با اورژانس (115)',
-            action: 'call_emergency',
-            type: 'emergency'
-          },
-          {
-            label: '🏥 یافتن نزدیک‌ترین بیمارستان',
-            action: 'find_hospital',
-            type: 'emergency'
-          }
-        ],
-        visualElements: {
-          type: 'warning',
-          content: 'این وضعیت نیاز به مراجعه فوری به پزشک دارد'
-        }
-      }
-    };
-  }
 
   private getSpecialFeatures(classification: string, template: any): any {
     const features: any = {
@@ -258,20 +222,27 @@ export class SymptomReportingModule extends CategoryModule {
     };
 
     // Add emergency-specific quick actions
-    if (classification === 'emergency') {
+    if (classification === 'EMERGENCY' || classification === 'emergency') {
       features.quickActions = [
         {
-          label: '📞 تماس با اورژانس',
+          label: '📞 تماس فوری با اورژانس (115)',
           action: 'call_emergency',
-          type: 'emergency'
+          type: 'emergency',
+          phone: '115'
         },
         {
-          label: '🏥 یافتن بیمارستان',
+          label: '🚨 تماس با آمبولانس',
+          action: 'call_ambulance', 
+          type: 'emergency',
+          phone: '115'
+        },
+        {
+          label: '🏥 یافتن نزدیک‌ترین بیمارستان',
           action: 'find_hospital',
           type: 'emergency'
         }
       ];
-    } else if (classification === 'urgent') {
+    } else if (classification === 'URGENT' || classification === 'urgent') {
       features.quickActions = [
         {
           label: '🏥 یافتن پزشک',
@@ -292,44 +263,92 @@ export class SymptomReportingModule extends CategoryModule {
   private formatFinalResponse(finalContent: any, template: any): string {
     let response = '';
     
-    if (template?.title) {
-      response += `**${template.title}**\n\n`;
+    // Header with triage classification
+    if (template?.header) {
+      response += `**${template.header}**\n\n`;
     }
 
-    if (finalContent.comprehensive_assessment) {
-      response += finalContent.comprehensive_assessment + '\n\n';
-    }
-
-    if (template?.recommendations?.length > 0) {
-      response += '**توصیه‌ها:**\n';
-      template.recommendations.forEach((rec: string, index: number) => {
-        response += `${index + 1}. ${rec}\n`;
+    // Emergency call buttons (for EMERGENCY level)
+    if (template?.actionButtons?.length > 0) {
+      template.actionButtons.forEach((button: any) => {
+        if (button.type === 'call') {
+          response += `🚨 **${button.label}**: ${button.phone}\n\n`;
+        }
       });
-      response += '\n';
     }
 
-    return CategoryUtils.addMedicalDisclaimer(response.trim());
+    // Process all template sections with AI-generated content
+    if (template?.sections?.length > 0) {
+      template.sections.forEach((section: any) => {
+        response += `${section.icon} **${section.title}**\n\n`;
+        
+        // Get AI-generated content for this section
+        const sectionContent = finalContent[section.key];
+        if (sectionContent) {
+          response += sectionContent + '\n\n';
+        } else if (section.key === 'comprehensive_assessment' && finalContent.comprehensive_assessment) {
+          // Fallback for comprehensive assessment
+          response += finalContent.comprehensive_assessment + '\n\n';
+        }
+      });
+    }
+
+    // Add template-specific disclaimer
+    if (template?.disclaimer) {
+      response += `⚠️ **توجه**: ${template.disclaimer}\n\n`;
+    }
+
+    return response.trim();
   }
 
   private formatTemplateResponse(template: any): string {
-    let response = `**${template.title || 'نتیجه بررسی علائم'}**\n\n`;
+    let response = '';
     
-    if (template.description) {
-      response += template.description + '\n\n';
+    // Header with triage classification
+    if (template?.header) {
+      response += `**${template.header}**\n\n`;
+    } else {
+      response += `**نتیجه بررسی علائم**\n\n`;
     }
 
-    if (template.recommendations?.length > 0) {
-      response += '**توصیه‌ها:**\n';
-      template.recommendations.forEach((rec: string, index: number) => {
-        response += `${index + 1}. ${rec}\n`;
+    // Primary action guidance
+    if (template?.primaryAction) {
+      response += `📋 **اقدام اولیه**: ${template.primaryAction}\n\n`;
+    }
+
+    // Emergency call buttons (for EMERGENCY level)
+    if (template?.actionButtons?.length > 0) {
+      template.actionButtons.forEach((button: any) => {
+        if (button.type === 'call') {
+          response += `🚨 **${button.label}**: ${button.phone}\n\n`;
+        }
       });
     }
 
-    return CategoryUtils.addMedicalDisclaimer(response);
+    // Template sections (fallback when AI content is not available)
+    if (template?.sections?.length > 0) {
+      template.sections.forEach((section: any) => {
+        response += `${section.icon} **${section.title}**\n`;
+        response += `لطفاً با پزشک مشورت کنید تا راهنمایی دقیق‌تری دریافت نمایید.\n\n`;
+      });
+    }
+
+    // Add template-specific disclaimer
+    if (template?.disclaimer) {
+      response += `⚠️ **توجه**: ${template.disclaimer}\n\n`;
+    }
+
+    return response.trim();
   }
 
   private getFinalResponsePrompt(category: string): string {
     const prompts = {
+      EMERGENCY: 'شما پزشک اورژانس هستید. بر اساس علائم گزارش شده، راهنمایی دقیق و فوری ارائه دهید.',
+      URGENT: 'شما پزشک عمومی هستید. علائم نشان‌دهنده وضعیت نیازمند مراقبت پزشکی است.',
+      SEMI_URGENT: 'شما پزشک عمومی هستید. علائم قابل توجه هستند و نیاز به پیگیری دارند.',
+      NON_URGENT: 'شما پزشک عمومی هستید. علائم خفیف هستند اما راهنمایی مناسب ارائه دهید.',
+      SELF_CARE: 'شما پزشک عمومی هستید. علائم قابل مدیریت با مراقبت‌های خانگی هستند.',
+      // Legacy fallbacks
       emergency: 'شما پزشک اورژانس هستید. بر اساس علائم گزارش شده، راهنمایی دقیق و فوری ارائه دهید.',
       urgent: 'شما پزشک عمومی هستید. علائم نشان‌دهنده وضعیت نیازمند مراقبت پزشکی است.',
       moderate: 'شما پزشک عمومی هستید. علائم قابل توجه هستند و نیاز به پیگیری دارند.',
@@ -337,7 +356,7 @@ export class SymptomReportingModule extends CategoryModule {
       self_care: 'شما پزشک عمومی هستید. علائم قابل مدیریت با مراقبت‌های خانگی هستند.'
     };
 
-    return prompts[category as keyof typeof prompts] || prompts.moderate;
+    return prompts[category as keyof typeof prompts] || prompts.SEMI_URGENT;
   }
 
   getCategoryInfo() {
@@ -382,51 +401,4 @@ export class SymptomReportingModule extends CategoryModule {
     };
   }
 
-  detectEmergency(message: string, conversation: CategoryMessage[]) {
-    const emergencyKeywords = {
-      critical: [
-        'نفس نمی‌آید', 'نفسم بند می‌آید', 'خفگی',
-        'درد شدید قلب', 'حمله قلبی', 'سکته',
-        'بی هوش', 'تشنج', 'درد شدید سینه'
-      ],
-      high: [
-        'درد شدید', 'خونریزی', 'تب بالا',
-        'درد شکم شدید', 'سردرد شدید', 'تهوع شدید'
-      ],
-      medium: [
-        'درد مداوم', 'تب', 'سرفه مداوم',
-        'اسهال', 'استفراغ', 'گیجی خفیف'
-      ]
-    };
-
-    const normalizedMessage = message.toLowerCase();
-    
-    for (const [level, keywords] of Object.entries(emergencyKeywords)) {
-      for (const keyword of keywords) {
-        if (normalizedMessage.includes(keyword)) {
-          return {
-            isEmergency: level !== 'medium',
-            level: level as 'low' | 'medium' | 'high' | 'critical',
-            recommendation: this.getEmergencyRecommendation(level)
-          };
-        }
-      }
-    }
-
-    return {
-      isEmergency: false,
-      level: 'low' as const,
-      recommendation: 'علائم خود را با جزئیات بیشتر شرح دهید.'
-    };
-  }
-
-  private getEmergencyRecommendation(level: string): string {
-    const recommendations = {
-      critical: 'فوراً با شماره ۱۱۵ تماس بگیرید یا به نزدیک‌ترین بیمارستان مراجعه کنید.',
-      high: 'در اسرع وقت با پزشک تماس بگیرید یا به مرکز درمانی مراجعه کنید.',
-      medium: 'توصیه می‌شود با پزشک مشورت کنید و علائم را پیگیری نمایید.'
-    };
-
-    return recommendations[level as keyof typeof recommendations] || recommendations.medium;
-  }
 }
