@@ -119,7 +119,11 @@ export default function ChatScreen() {
     const messageKey = `${messageId}`
     if (handleSendMessage && !clickedOptions.has(messageKey)) {
       handleSendMessage(option)
-      setClickedOptions(prev => new Set([...prev, messageKey]))
+      setClickedOptions(prev => {
+        const newSet = new Set(prev)
+        newSet.add(messageKey)
+        return newSet
+      })
     }
   }
 
