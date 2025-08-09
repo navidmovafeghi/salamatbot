@@ -8,7 +8,7 @@
 import { CategoryModule, CategoryResponse, CategorySession, CategoryMessage, CategoryUtils } from './base/CategoryModule';
 import { MedicalIntent } from '../classification/intentClassifier';
 import { generateTriageResponse, generateFinalTriageResponse } from '../openai';
-import { getTriageTemplate } from '../triageTemplates';
+import { getTriageTemplate, formatTemplateResponse, getTemplateQuickActions } from '../triageTemplates';
 import { TRIAGE_SYSTEM_PROMPT } from '../triagePrompts';
 
 export class SymptomReportingModule extends CategoryModule {
@@ -150,6 +150,16 @@ export class SymptomReportingModule extends CategoryModule {
   ): Promise<CategoryResponse> {
     const template = getTriageTemplate(classification.category);
     
+    if (!template) {
+      // Fallback response when template is not found
+      return {
+        message: 'متأسفانه خطایی در سیستم رخ داده است. لطفاً دوباره تلاش کنید.',
+        isComplete: true,
+        nextAction: 'complete',
+        metadata: { classification: classification.category }
+      };
+    }
+    
     try {
       // Generate detailed final response using specialized prompts
       const finalResponse = await generateFinalTriageResponse(
@@ -165,7 +175,7 @@ export class SymptomReportingModule extends CategoryModule {
       }
 
       return {
-        message: this.formatFinalResponse(finalContent, template),
+        message: formatTemplateResponse(template, finalContent),
         isComplete: true,
         nextAction: classification.category === 'EMERGENCY' ? 'escalate' : 'complete',
         metadata: {
@@ -173,19 +183,35 @@ export class SymptomReportingModule extends CategoryModule {
           template: template,
           finalResponse: finalContent
         },
-        specialFeatures: this.getSpecialFeatures(classification.category, template)
+        specialFeatures: {
+          quickActions: getTemplateQuickActions(template),
+          followUpSuggestions: [
+            'شروع گفتگوی جدید',
+            'سوال دارویی',
+            'اطلاعات پزشکی'
+          ]
+        }
       };
 
     } catch (error) {
       console.error('Final response generation error:', error);
       
       // Fallback to template-only response
+      const fallbackContent = { comprehensive_assessment: 'لطفاً با پزشک مشورت کنید تا راهنمایی دقیق‌تری دریافت نمایید.' };
+      
       return {
-        message: this.formatTemplateResponse(template),
+        message: formatTemplateResponse(template, fallbackContent),
         isComplete: true,
         nextAction: classification.category === 'EMERGENCY' ? 'escalate' : 'complete',
         metadata: { classification: classification.category, template },
-        specialFeatures: this.getSpecialFeatures(classification.category, template)
+        specialFeatures: {
+          quickActions: getTemplateQuickActions(template),
+          followUpSuggestions: [
+            'شروع گفتگوی جدید',
+            'سوال دارویی',
+            'اطلاعات پزشکی'
+          ]
+        }
       };
     }
   }
@@ -211,153 +237,6 @@ export class SymptomReportingModule extends CategoryModule {
     };
   }
 
-
-  private getSpecialFeatures(classification: string, template: any): any {
-    const features: any = {
-      followUpSuggestions: [
-        'شروع گفتگوی جدید',
-        'سوال دارویی',
-        'اطلاعات پزشکی'
-      ]
-    };
-
-    // Add emergency-specific quick actions
-    if (classification === 'EMERGENCY' || classification === 'emergency') {
-      features.quickActions = [
-        {
-          label: '📞 تماس فوری با اورژانس (115)',
-          action: 'call_emergency',
-          type: 'emergency',
-          phone: '115'
-        },
-        {
-          label: '🚨 تماس با آمبولانس',
-          action: 'call_ambulance', 
-          type: 'emergency',
-          phone: '115'
-        },
-        {
-          label: '🏥 یافتن نزدیک‌ترین بیمارستان',
-          action: 'find_hospital',
-          type: 'emergency'
-        }
-      ];
-    } else if (classification === 'URGENT' || classification === 'urgent') {
-      features.quickActions = [
-        {
-          label: '🏥 یافتن پزشک',
-          action: 'find_doctor',
-          type: 'action'
-        },
-        {
-          label: '📋 نکات مراقبتی',
-          action: 'care_tips',
-          type: 'info'
-        }
-      ];
-    }
-
-    return features;
-  }
-
-  private formatFinalResponse(finalContent: any, template: any): string {
-    let response = '';
-    
-    // Header with triage classification
-    if (template?.header) {
-      response += `**${template.header}**\n\n`;
-    }
-
-    // Emergency call buttons (for EMERGENCY level)
-    if (template?.actionButtons?.length > 0) {
-      template.actionButtons.forEach((button: any) => {
-        if (button.type === 'call') {
-          response += `🚨 **${button.label}**: ${button.phone}\n\n`;
-        }
-      });
-    }
-
-    // Process all template sections with AI-generated content
-    if (template?.sections?.length > 0) {
-      template.sections.forEach((section: any) => {
-        response += `${section.icon} **${section.title}**\n\n`;
-        
-        // Get AI-generated content for this section
-        const sectionContent = finalContent[section.key];
-        if (sectionContent) {
-          response += sectionContent + '\n\n';
-        } else if (section.key === 'comprehensive_assessment' && finalContent.comprehensive_assessment) {
-          // Fallback for comprehensive assessment
-          response += finalContent.comprehensive_assessment + '\n\n';
-        }
-      });
-    }
-
-    // Add template-specific disclaimer
-    if (template?.disclaimer) {
-      response += `⚠️ **توجه**: ${template.disclaimer}\n\n`;
-    }
-
-    return response.trim();
-  }
-
-  private formatTemplateResponse(template: any): string {
-    let response = '';
-    
-    // Header with triage classification
-    if (template?.header) {
-      response += `**${template.header}**\n\n`;
-    } else {
-      response += `**نتیجه بررسی علائم**\n\n`;
-    }
-
-    // Primary action guidance
-    if (template?.primaryAction) {
-      response += `📋 **اقدام اولیه**: ${template.primaryAction}\n\n`;
-    }
-
-    // Emergency call buttons (for EMERGENCY level)
-    if (template?.actionButtons?.length > 0) {
-      template.actionButtons.forEach((button: any) => {
-        if (button.type === 'call') {
-          response += `🚨 **${button.label}**: ${button.phone}\n\n`;
-        }
-      });
-    }
-
-    // Template sections (fallback when AI content is not available)
-    if (template?.sections?.length > 0) {
-      template.sections.forEach((section: any) => {
-        response += `${section.icon} **${section.title}**\n`;
-        response += `لطفاً با پزشک مشورت کنید تا راهنمایی دقیق‌تری دریافت نمایید.\n\n`;
-      });
-    }
-
-    // Add template-specific disclaimer
-    if (template?.disclaimer) {
-      response += `⚠️ **توجه**: ${template.disclaimer}\n\n`;
-    }
-
-    return response.trim();
-  }
-
-  private getFinalResponsePrompt(category: string): string {
-    const prompts = {
-      EMERGENCY: 'شما پزشک اورژانس هستید. بر اساس علائم گزارش شده، راهنمایی دقیق و فوری ارائه دهید.',
-      URGENT: 'شما پزشک عمومی هستید. علائم نشان‌دهنده وضعیت نیازمند مراقبت پزشکی است.',
-      SEMI_URGENT: 'شما پزشک عمومی هستید. علائم قابل توجه هستند و نیاز به پیگیری دارند.',
-      NON_URGENT: 'شما پزشک عمومی هستید. علائم خفیف هستند اما راهنمایی مناسب ارائه دهید.',
-      SELF_CARE: 'شما پزشک عمومی هستید. علائم قابل مدیریت با مراقبت‌های خانگی هستند.',
-      // Legacy fallbacks
-      emergency: 'شما پزشک اورژانس هستید. بر اساس علائم گزارش شده، راهنمایی دقیق و فوری ارائه دهید.',
-      urgent: 'شما پزشک عمومی هستید. علائم نشان‌دهنده وضعیت نیازمند مراقبت پزشکی است.',
-      moderate: 'شما پزشک عمومی هستید. علائم قابل توجه هستند و نیاز به پیگیری دارند.',
-      mild: 'شما پزشک عمومی هستید. علائم خفیف هستند اما راهنمایی مناسب ارائه دهید.',
-      self_care: 'شما پزشک عمومی هستید. علائم قابل مدیریت با مراقبت‌های خانگی هستند.'
-    };
-
-    return prompts[category as keyof typeof prompts] || prompts.SEMI_URGENT;
-  }
 
   getCategoryInfo() {
     return {

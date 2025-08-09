@@ -32,7 +32,7 @@ export interface TriageClassification {
 
 export const CLASSIFICATION_TEMPLATES: Record<string, TriageTemplate> = {
   EMERGENCY: {
-    header: "طبقه‌بندی تریاژ: فوریت (قرمز)",
+    header: "فوریت (قرمز)",
     cssClass: "emergency",
     actionButtons: [
       {
@@ -49,18 +49,13 @@ export const CLASSIFICATION_TEMPLATES: Record<string, TriageTemplate> = {
         icon: "🏥"
       },
       {
-        key: "immediate_actions", 
-        title: "اقدامات فوری - همین الان انجام دهید",
+        key: "emergency_actions",
+        title: "اقدامات فوری و دستورالعمل اضطراری",
         icon: "🚨",
         cssClass: "immediate-actions-section"
-      },
-      {
-        key: "emergency_instructions",
-        title: "دستورالعمل اضطراری",
-        icon: "📞"
       }
     ],
-    disclaimer: "این ارزیابی تشخیص پزشکی نیست. فوراً با اورژانس تماس بگیرید."
+    disclaimer: "این ارزیابی تشخیص پزشکی نیست و جایگزین مراقبت پزشکی فوری نمی‌شود."
   },
 
   URGENT: {
@@ -197,4 +192,80 @@ export function getTriageTemplate(category: string): TriageTemplate | null {
 // Helper function to get all available categories
 export function getAvailableCategories(): string[] {
   return Object.keys(CLASSIFICATION_TEMPLATES);
+}
+
+/**
+ * Backend template response formatter
+ * This centralizes response formatting in templates instead of frontend
+ * Produces identical output to frontend formatFinalResponse for compatibility
+ */
+export function formatTemplateResponse(
+  template: TriageTemplate, 
+  content: Record<string, string>
+): string {
+  let response = '';
+  
+  // Header with triage classification
+  if (template?.header) {
+    response += `**${template.header}**\n\n`;
+  }
+
+  // Emergency call buttons are handled by UI components, not text
+
+  // Process all template sections with AI-generated content
+  if (template?.sections?.length > 0) {
+    template.sections.forEach((section) => {
+      response += `${section.icon} **${section.title}**\n\n`;
+      
+      // Get AI-generated content for this section
+      const sectionContent = content[section.key];
+      if (sectionContent) {
+        response += sectionContent + '\n\n';
+      } else if (section.key === 'comprehensive_assessment' && content.comprehensive_assessment) {
+        // Fallback for comprehensive assessment
+        response += content.comprehensive_assessment + '\n\n';
+      }
+    });
+  }
+
+  // Add template-specific disclaimer
+  if (template?.disclaimer) {
+    response += `⚠️ **توجه**: ${template.disclaimer}\n\n`;
+  }
+
+  return response.trim();
+}
+
+/**
+ * Convert template actionButtons to Message quickActions format
+ * This eliminates duplication between template buttons and frontend quickActions
+ */
+export function getTemplateQuickActions(template: TriageTemplate): Array<{
+  label: string;
+  action: string;
+  type: 'emergency' | 'info' | 'action';
+  phone?: string;
+}> {
+  const quickActions: Array<{
+    label: string;
+    action: string;
+    type: 'emergency' | 'info' | 'action';
+    phone?: string;
+  }> = [];
+
+  // Convert template actionButtons to quickActions
+  if (template?.actionButtons?.length > 0) {
+    template.actionButtons.forEach((button) => {
+      if (button.type === 'call') {
+        quickActions.push({
+          label: button.label,
+          action: 'call_ambulance',
+          type: 'emergency',
+          phone: button.phone
+        });
+      }
+    });
+  }
+
+  return quickActions;
 }

@@ -51,8 +51,7 @@ export const END_RESPONSE_PROMPTS = {
 Return JSON with:
 {
   "comprehensive_assessment": "Complete medical overview of symptoms, concerns, and risk factors identified",
-  "immediate_actions": "3-5 critical life-saving actions to take RIGHT NOW while waiting for emergency services. Use clear, numbered Persian instructions separated by <br> tags for proper display.",
-  "emergency_instructions": "Specific Persian instructions emphasizing the need to call 115 immediately and what to tell them"
+  "emergency_actions": "3-5 critical life-saving actions to take RIGHT NOW while waiting for emergency services, plus specific instructions about calling 115. Use clear, numbered Persian instructions separated by <br> tags for proper display."
 }`,
 
   URGENT: `Based on this medical conversation, provide medical content for URGENT triage in Persian.

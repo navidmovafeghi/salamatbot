@@ -50,7 +50,7 @@ export default function ChatScreen() {
   const isVisible = isChatMode
   const chatHistoryRef = useRef<HTMLDivElement>(null)
   
-  // Track clicked options to disable them
+  // Track clicked options per message to disable them (messageId-option format)
   const [clickedOptions, setClickedOptions] = useState<Set<string>>(new Set())
 
   // Auto-scroll to bottom when new messages are added
@@ -115,10 +115,11 @@ export default function ChatScreen() {
     }
   }
 
-  const handleOptionClick = (option: string) => {
-    if (handleSendMessage && !clickedOptions.has(option)) {
+  const handleOptionClick = (option: string, messageId: string) => {
+    const messageKey = `${messageId}`
+    if (handleSendMessage && !clickedOptions.has(messageKey)) {
       handleSendMessage(option)
-      setClickedOptions(prev => new Set([...prev, option]))
+      setClickedOptions(prev => new Set([...prev, messageKey]))
     }
   }
 
@@ -273,12 +274,13 @@ export default function ChatScreen() {
             {message.options && message.options.length > 0 && (
               <div className="message-options">
                 {message.options.map((option, index) => {
-                  const isDisabled = clickedOptions.has(option)
+                  const messageKey = `${message.id}`
+                  const isDisabled = clickedOptions.has(messageKey)
                   return (
                     <button
                       key={index}
                       className={`option-btn ${isDisabled ? 'disabled' : ''}`}
-                      onClick={isDisabled ? undefined : () => handleOptionClick(option)}
+                      onClick={isDisabled ? undefined : () => handleOptionClick(option, message.id)}
                       disabled={isDisabled}
                     >
                       {option}
@@ -303,11 +305,6 @@ export default function ChatScreen() {
               </div>
             )}
 
-            {message.isEmergency && (
-              <div className="emergency-warning">
-                ⚠️ این پیام ممکن است نشان‌دهنده وضعیت اورژانسی باشد. در صورت نیاز فوراً با پزشک تماس بگیرید.
-              </div>
-            )}
           </div>
         ))}
       </div>
