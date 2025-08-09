@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Message } from '../page'
 import { useAppContext } from '../contexts'
 import HistoryModal from './HistoryModal'
@@ -49,6 +49,9 @@ export default function ChatScreen() {
   // Component is only visible when in chat mode
   const isVisible = isChatMode
   const chatHistoryRef = useRef<HTMLDivElement>(null)
+  
+  // Track clicked options to disable them
+  const [clickedOptions, setClickedOptions] = useState<Set<string>>(new Set())
 
   // Auto-scroll to bottom when new messages are added
   useEffect(() => {
@@ -56,6 +59,11 @@ export default function ChatScreen() {
       chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight
     }
   }, [messages])
+  
+  // Clear clicked options when messages change (new chat, etc.)
+  useEffect(() => {
+    setClickedOptions(new Set())
+  }, [messages.length === 0])
 
   // Notify menu manager when this component becomes active
   useEffect(() => {
@@ -108,8 +116,9 @@ export default function ChatScreen() {
   }
 
   const handleOptionClick = (option: string) => {
-    if (handleSendMessage) {
+    if (handleSendMessage && !clickedOptions.has(option)) {
       handleSendMessage(option)
+      setClickedOptions(prev => new Set([...prev, option]))
     }
   }
 
@@ -263,15 +272,19 @@ export default function ChatScreen() {
             {/* Quick Options */}
             {message.options && message.options.length > 0 && (
               <div className="message-options">
-                {message.options.map((option, index) => (
-                  <button
-                    key={index}
-                    className="option-btn"
-                    onClick={() => handleOptionClick(option)}
-                  >
-                    {option}
-                  </button>
-                ))}
+                {message.options.map((option, index) => {
+                  const isDisabled = clickedOptions.has(option)
+                  return (
+                    <button
+                      key={index}
+                      className={`option-btn ${isDisabled ? 'disabled' : ''}`}
+                      onClick={isDisabled ? undefined : () => handleOptionClick(option)}
+                      disabled={isDisabled}
+                    >
+                      {option}
+                    </button>
+                  )
+                })}
               </div>
             )}
 

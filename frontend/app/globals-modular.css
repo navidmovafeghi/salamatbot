@@ -1,0 +1,12 @@
+/* --- Modular CSS Architecture --- */
+
+/* Import variables first */
+@import './styles/variables.css';
+
+/* Import base styles */
+@import './styles/base.css';
+
+/* Import remaining styles from current globals.css */
+/* TODO: Gradually move these to separate files */
+
+/* For now, include the rest of the CSS inline */

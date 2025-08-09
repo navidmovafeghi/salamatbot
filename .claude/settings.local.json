@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(rmdir:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(cp:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }
