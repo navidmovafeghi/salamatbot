@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "UNIFIED_ARCHITECTURE_CONSIDERATIONS.md",
+                "file": "TECHNICAL_ARCHITECTURE.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "UNIFIED_ARCHITECTURE_CONSIDERATIONS"
+              "title": "TECHNICAL_ARCHITECTURE"
             }
           }
         ]
@@ -170,6 +170,7 @@
   },
   "active": "ab7d0cc94d721d61",
   "lastOpenFiles": [
+    "UNIFIED_ARCHITECTURE_CONSIDERATIONS.md",
     "frontend/tsconfig.tsbuildinfo",
     "frontend/app/lib/categories/PlaceholderModules.ts",
     "frontend/app/components/UnifiedChat.tsx",
@@ -183,7 +184,6 @@
     "AUTHENTIC_MEDICAL_FLOW_IMPLEMENTATION.md",
     "tmp_code_d3a0a1c76d1c3f92b093c835823b938896ca0c17f553c6f0e427483fdb663908.ps1",
     "tmp_rovodev_test_api_key.js",
-    "tmp_code_4f83d39952be2e818a273f645d1c6a91a90a6c1eb1afc31161873b87086056f3.ps1",
     "tmp_rovodev_IMPLEMENTATION_SUMMARY.md",
     "frontend/tmp_rovodev_test_save_dialog.md",
     "GEMINI_IMPLEMENTATION_PROGRESS.md",

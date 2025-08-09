@@ -75,15 +75,25 @@ export class SymptomReportingModule extends CategoryModule {
     session.lastActivity = new Date();
 
     try {
+      // Convert conversation to ChatMessage format for OpenAI
+      const chatMessages = session.conversation.map(msg => ({
+        role: msg.role as 'system' | 'user' | 'assistant',
+        content: msg.content
+      }));
+      
       // Generate AI response using existing triage logic
-      const aiResponse = await generateTriageResponse(session.conversation);
+      const aiResponse = await generateTriageResponse(chatMessages);
       const assistantContent = aiResponse.content;
+
+      console.log('Raw AI response:', assistantContent);
 
       // Try to parse as classification
       let parsedResponse;
       try {
         parsedResponse = JSON.parse(assistantContent);
+        console.log('Parsed response:', parsedResponse);
       } catch {
+        console.log('Failed to parse JSON, treating as plain text');
         parsedResponse = null;
       }
 
@@ -94,8 +104,26 @@ export class SymptomReportingModule extends CategoryModule {
         session.metadata.finalClassification = parsedResponse.category;
 
         return await this.generateFinalResponse(session, parsedResponse, apiKey);
+      } else if (parsedResponse && parsedResponse.type === 'question') {
+        // Continue assessment with parsed question
+        session.conversation.push({
+          role: 'assistant',
+          content: assistantContent,
+          timestamp: new Date()
+        });
+
+        return {
+          message: parsedResponse.message,
+          options: parsedResponse.options || [],
+          nextAction: 'continue',
+          metadata: {
+            stage: 'assessment',
+            questionsAsked: session.metadata.questionsAsked,
+            maxQuestions: session.metadata.maxQuestions
+          }
+        };
       } else {
-        // Continue assessment with question
+        // Continue assessment with fallback parsing
         session.conversation.push({
           role: 'assistant',
           content: assistantContent,
@@ -179,11 +207,12 @@ export class SymptomReportingModule extends CategoryModule {
       if (parsed.type === 'question') {
         return {
           message: parsed.message || content,
-          options: parsed.options,
+          options: parsed.options || [],
           nextAction: 'continue'
         };
       }
-    } catch {
+    } catch (error) {
+      console.error('JSON parsing error in SymptomReportingModule:', error);
       // Not JSON, treat as regular question
     }
 
